@@ -1,0 +1,39 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<section class="py-5 text-light">
+  <div class="container">
+    <br>
+    <div class="row">
+      <div class="col-sm-10">
+        <h2>Blog Posts</h2>
+
+        {% for art in arts %}
+        <div class="card text-dark" >
+          {% if art.img %}
+          <img class="card-img-top text-center" src="{{art.img}}" alt="Card image cap">
+          {% endif %}
+          <div class="card-block">
+            <h4 class="card-title">{{art.subject}}</h4>
+            <h6 class="card-subtitle mb-2 text-muted">{{art.created}} {{art.author}}</h6>
+            <p class="card-text">{{art.content}}</p>
+            <a href="#" class="card-link">Read more</a>
+          </div>
+        </div>
+        <br>
+
+
+        {% endfor %}
+
+      </div>
+      <div class="col-sm-2">
+        <form method="post">
+          <button class="btn btn-success" type="submit" name="new-post">New Post</button>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

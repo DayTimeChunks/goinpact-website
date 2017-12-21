@@ -1,0 +1,122 @@
+{% extends "base.html"%}
+
+{% block content %}
+
+    <header>
+      <!-- Intro image  -->
+      <!-- TODO: This is hacked! not the best solution! -->
+        <div class="container-fluid">
+          <div class="row">
+            <div class="container-crop">
+              <img src="www/img/hand-rocks-donation-rect.jpg" alt="Donation Image"  height="1343" width="1920">
+            </div>
+          </div>
+        </div>
+    </header>
+
+
+    <!-- Support -->
+    <section id="support" class="py-5">
+      <div class="container text-light">
+        <h1>Support</h1>
+        <p>Our project has started in the summer 2017. We are now building our network and establishing trusted relationship with our local partners. Our selection of project is still limited for the moment but we are working hard to offer you a larger range of projects matching your expectations. If you don't find a project corresponding to your preferences, please contact us to tell us what kind of project you would like to support.</p>
+        <p>Feel free to follow us on Facebook and on our blog to see our progress in getting our projects on board.</p>
+      </div>
+      <br>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 text-light">
+            <div class="row align-self-center">
+              <div class="col-md-3"></div>
+              <div class="col-md-8 text-center">
+              <img class="img-thumbnail img-fluid" src="www/img/classes02.jpg" alt="School in Benin" width="640" height="480">
+              <br><br>
+              <h4>Houngo School Construction</h4>
+              <h5>Tori, Benin</h5>
+
+              <p>The Houngo public school in Tori is over-crowded, help us building classrooms and give the kids better conditions to learn.</p>
+              <p>With your donations, we will build 2 new classrooms in the village of Tori in Benin, Africa.</p>
+              <br>
+              <p>Project target: 500€</p>
+              <p>Due date: January 13th, 2018</p>
+                <div class="progress">
+                  <div class="progress-bar bg-success" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+                </div>
+                <br>
+                <p>Progress</p>
+              <br>
+              <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                <input type="hidden" name="cmd" value="_s-xclick">
+                <input type="hidden" name="hosted_button_id" value="HKJ2H4F6LFM4A">
+                <button class="btn btn-success" type="image" name="submit">Donate</button>
+                <!-- Replaced Paypal's button for ours -->
+                <!-- <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"> -->
+                <!-- <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"> -->
+              </form>
+              <br>
+              <p class="font-italic">powered by PayPal</p>
+              <i class="fa fa-paypal" aria-hidden="true"></i>
+              </div>
+            </div>
+            <br><br>
+          </div>
+          <!-- New column -->
+          <div class="col-md-6 text-light">
+            <div class="row align-self-center">
+              <div class="col-md-8 text-center">
+              <img class="img-thumbnail img-fluid" src="www/img/workMap-640x480.jpg" alt="Team Project" width="640" height="480">
+              <br><br>
+              <h4>Support the inPact Team</h4>
+              <br>
+              <!-- <h5></h5> -->
+
+              <p>We are willing to spend time and resources to find great projects and bring our little contribution to make our world a better place for all. Any donation is welcome to help us achieve more.</p>
+              <p>We guarantee a transparent use of the resources, all our actions are detailed in our blog section on our Facebook page.</p>
+              <br>
+              <p>Project target: 1000€</p>
+              <p>Due date : July 15th, 2018</p>
+              <div class="progress">
+                <div class="progress-bar bg-success" role="progressbar" style="width: 10%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">10%</div>
+              </div>
+              <br>
+              <p>Progress</p>
+              <br>
+              <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                <input type="hidden" name="cmd" value="_s-xclick">
+                <input type="hidden" name="hosted_button_id" value="HKJ2H4F6LFM4A">
+                <button class="btn btn-success" type="image" name="submit">Donate</button>
+                <!-- Replaced Paypal's button for ours -->
+                <!-- <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"> -->
+                <!-- <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1"> -->
+              </form>
+              <br>
+              <p class="font-italic">powered by PayPal</p>
+              <i class="fa fa-paypal" aria-hidden="true"></i>
+              </div>
+              <div class="col-md-3"></div>
+              <br><br>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="container text-light">
+        <p>As a newly registered non-profit, we are restricted by our limited finance but you can help us achieve more by donating to our project. We will email you a credit receipt that you can use for tax deduction purposes. On your request, we will communicate about your support on our Facebook page.</p>
+        <p>Donations can also be made at:</p>
+        <ul class="list-unstyled">
+          <li>Antoine VACHER, ADAPPT Treasurer</li>
+          <li>IBAN:  DE28500105175563518887</li>
+          <li>BIC: INGDDEFFXXX</li>
+        </ul>
+        <p>Thank you for your support!</p>
+        <p>We also value knowledge. Support us with your ideas, contacts and advise, just get in touch!</p>
+        <br>
+        <a href="index.html#contact">
+          <button class="btn btn-light" type="button" name="button">Contact</button>
+        </a>
+      </div>
+    </section>
+    <!-- Footer -->
+{% endblock %}

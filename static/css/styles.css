@@ -1,0 +1,154 @@
+/*!
+ * Start Bootstrap - Full Slider (https://startbootstrap.com/template-overviews/full-slider)
+ * Copyright 2013-2017 Start Bootstrap
+ * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-full-slider/blob/master/LICENSE)
+ */
+
+/* Place holder images deleted
+"http://placehold.it/1900x1080"
+*/
+
+.cursive {
+  font-family: 'Dancing Script', cursive;
+}
+
+.carousel-item {
+  height: 100vh;
+  min-height: 300px;
+  background: no-repeat center center scroll;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.short{
+  height: 600px;
+  /*height:calc(100% - 50px);*/
+}
+/*
+.short  .img-responsive {
+    display: block;
+    width: auto;
+    max-height: 100%;
+}*/
+
+
+
+.container-crop {
+  display: block;
+  width: 100%;
+  height: auto;
+  /*height: 100%;*/
+  position: relative;
+  overflow: hidden;
+  /* width="1920" height="1343" */
+  /* 34.37% = 100 / (w / h) = 100 / (640 / 220) */
+  /*padding: 0 0  0 142.95% ; */
+  padding: 40% 0 0  0 ;
+
+}
+
+.container-crop img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.contain-full{
+  /*background-size: 175% auto;*/
+  /*background-image: none;*/
+  /*background-size: contain;*/
+}
+
+.frame-oval {
+  max-height: 270px;
+  /*width: 120px;
+  min-height: 120px;
+  max-height: auto;*/
+  /*max-width: auto;
+  */
+  /*min-width: 120px;
+  min-height: 120px;*/
+  /*padding-left: 0;
+  padding-right: 0;*/
+}
+
+/* My own theme */
+body {
+ /*background-color: #616161;*/
+ background-color: #3E4551;
+}
+
+.green-text {
+  color: #9DB946;
+}
+.gray-text {
+  color: #616161;
+}
+.green-section {
+  /*max-width: 100%;*/
+  background: #9DB946;
+}
+
+.dark-gray-text{
+  color: #3E4551;
+}
+
+/* Form edits */
+.no-border {
+    border: 0;
+    box-shadow: none; /* You may want to include this as bootstrap applies these styles too */
+    border-bottom: 1px solid #616161;
+
+}
+
+/*// Extra small devices (portrait phones, less than 576px)
+// No media query since this is the default in Bootstrap*/
+
+/*// Small devices (landscape phones, 576px and up)
+@media (min-width: 576px) {
+
+}*/
+
+.how-it-works {
+  display: none;
+}
+
+/*// Medium devices (tablets, 768px and up)*/
+@media (min-width: 768px) {
+
+  .contain-full {
+    background-image: url('../img/coastline-sep.jpg');
+    background-size: 175% auto;
+    /*background-size: contain;*/
+  }
+
+  .canvas-neighbor {
+    display: flex;
+    justify-content: right;
+    align-items: center;
+  }
+
+}
+
+/* Large devices */
+@media (min-width: 992px) {
+  .how-it-works {
+    display: inline;
+  }
+  .how-it-works-small {
+    display: none;
+  }
+}
+
+/*// Large devices (desktops, 992px and up)
+@media (min-width: 992px) { ... }
+
+// Extra large devices (large desktops, 1200px and up)
+@media (min-width: 1200px) { ... }*/

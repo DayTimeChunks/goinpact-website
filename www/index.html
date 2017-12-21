@@ -1,0 +1,235 @@
+{% extends "base.html"%}
+
+{% block content %}
+<!-- Carousel -->
+<header>
+  <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+    <ol class="carousel-indicators">
+      <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+      <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+      <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+    </ol>
+    <div class="carousel-inner" role="listbox">
+      <!-- Slide One - Set the background image for this slide in the line below -->
+      <div class="carousel-item active" style="background-image: url('www/img/paddyField-cropmin.jpg')">
+        <div class="carousel-caption d-none d-md-block" id="carouselExampleIndicators0">
+          <!-- <h3>inPact</h3>
+          <p class="text-dark"> <strong> Empowering people and their communities </strong></p> -->
+        </div>
+      </div>
+      <!-- Slide Two - Set the background image for this slide in the line below -->
+      <div class="carousel-item" style="background-image: url('www/img/fixingCar-1200x800.jpg')">
+        <div class="carousel-caption d-none d-md-block">
+          <h3>inPact</h3>
+          <p>Empowering people and their communities</p>
+        </div>
+      </div>
+      <!-- Slide Three - Set the background image for this slide in the line below -->
+      <div class="carousel-item" style="background-image: url('www/img/busKids-min.jpeg')">
+        <div class="carousel-caption d-none d-md-block">
+          <h3>inPact</h3>
+          <p>Empowering people and their communities</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Page at A Glance -->
+<section id="glance" name="glance" class="py-5">
+  <br>
+  <div class="container text-light text-center">
+    <h1>inPact at a Glance</h1>
+    <p>inPact is a start-up venture whose aim is to create an interactive and participative platform for project funding in the development world. Through this interactive crowdfunding tool, inPact seeks to help fund and support small to medium projects associated to health, education, environment and economic development. By bridging funders, expertise and collective know-how with local knowledge and ideas we aim to empower communities where these projects are born.</p>
+  </div>
+  <br>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-3"></div>
+      <div class="col-sm-3  text-center">
+        <a href="support.html">
+          <button class="btn btn-dark" type="button" name="button">Support</button>
+        </a>
+      </div>
+      <br><br>
+      <div class="col-sm-3 text-center">
+        <a href="#contact">
+          <button class="btn btn-dark" type="button" name="button">Contact</button>
+        </a>
+      </div>
+      <div class="col-sm-3"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Page How it works -->
+<section id="" class="text-light text-center">
+    <div class="container-fluid green-section py-5">
+      <!-- No diagram in small devices -->
+      <div class="container how-it-works-small">
+        <h1>How it works</h1>
+        <br>
+        <h3 class="text-dark">1. Select a project</h3>
+        <h3 class="text-dark ">2. Support </h3>
+        <h3 class="text-dark">3. Follow-up</h3>
+        <h3 class="text-dark ">4. Share with friends</h3>
+      </div>
+
+      <!-- Diagram for large devices only -->
+      <div class="container how-it-works">
+        <h1>How it works</h1>
+        <br>
+        <h3 class="text-dark">Select a project</h3>
+        <br>
+        <div class="row">
+          <div class="col-sm-2 canvas-neighbor">
+            <h3 class="text-dark ">Share with friends</h3>
+          </div>
+          <div class="col-sm-8">
+            <canvas id="canvas" class="" width="600" height="500">Your browser does not support the drawings in this section</canvas>
+          </div>
+          <div class="col-sm-2 canvas-neighbor">
+            <h3 class="text-dark ">Support </h3>
+          </div>
+        </div>
+        <br>
+        <h3 class="text-dark">Follow-up</h3>
+      </div>
+  </div>
+</section>
+
+<!-- Two column section -->
+<!-- Page Community -->
+<section id="community" class="py-5">
+  <!-- The Team  -->
+  <br>
+  <div class="container text-light text-center">
+    <div class="row">
+      <div class="col-md-6">
+        <img class="img-thumbnail" src="www/img/poundTeam-min.jpeg" alt="The Team">
+      </div>
+      <div class="col-md-6 align-self-center">
+        <br>
+        <h2 >
+          <a class="green-text" href="/team">The inPact Team</a> </h2>
+        <p class="white-text">With this initiative, our goal is to promote great opportunities for those in need. With access to the right resources, people can become empowered by their own abilities and gain the confidence to fulfil their potential. Learn more about our work by getting in touch with our team today.</p>
+        <br>
+      </div>
+    </div>
+  </div>
+  <!-- Project Holders -->
+  <br>
+  <div class="container text-light text-center">
+    <div class="row">
+      <div class="col-md-6">
+        <img class="img-thumbnail" src="www/img/woodcarver-min.jpg" alt="The Team">
+      </div>
+      <div class="col-md-6 align-self-center">
+        <br>
+        <h2 class="green-text">Project Holders</h2>
+        <p class="white-text">At inPact, we aim to support individuals and organisations having a project idea somewhere in the world but not having access to affordable finance. You have a project idea in your mind? Get in touch and let's find a way to finance it!</p>
+        <br>
+      </div>
+    </div>
+  </div>
+  <!-- Local Partners -->
+  <br>
+  <div class="container text-light text-center">
+    <div class="row">
+      <div class="col-md-6">
+        <img class="img-thumbnail" src="www/img/poundTeam-min.jpeg" alt="The Team">
+      </div>
+      <div class="col-md-6 align-self-center">
+        <br>
+        <h2 class="green-text">Local Partners</h2>
+        <p class="white-text">Local partners are key to the success of any project. Being an active member in the community, while having a deep sense of the cultural context are two defining traits of a local change agent. Are you a catalyst for change?</p>
+        <br>
+      </div>
+    </div>
+  </div>
+  <!-- Donors & investors -->
+  <br>
+  <div class="container text-light text-center">
+    <div class="row">
+      <div class="col-md-6">
+        <img class="img-thumbnail" src="www/img/woodcarver-min.jpg" alt="The Team">
+      </div>
+      <div class="col-md-6 align-self-center">
+        <br>
+        <h2 class="green-text">Donors & Investors</h2>
+        <p class="white-text">Support project holders through donations & investment. The projects that you find on the site have already been appraised and validated by our team. We only publish projects from verified partners that we trust.</p>
+        <br>
+      </div>
+    </div>
+  </div>
+  <!-- Reviewer Community -->
+  <br>
+  <div class="container text-light text-center">
+    <div class="row">
+      <div class="col-md-6">
+        <img class="img-thumbnail" src="www/img/workMap-2000x1306min.jpg" alt="The Team">
+      </div>
+      <div class="col-md-6 align-self-center">
+        <br>
+        <h2 class="green-text">Reviewer Community</h2>
+        <p class="white-text">We believe that anyone can contribute, also with knowledge! We receive project applications from all over the world and your expertise can help a project holder succeed. Are you willing to help? Contact us to become a part of our reviewer community.</p>
+        <br>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Page Contact -->
+<section id="contact" class="">
+    <div class="container-fluid green-section py-5">
+      <div class="container gray-text">
+        <form class="" action="index.html" method="post">
+
+          <br>
+          <h1>Contact inPact</h1>
+          <p>Get in touch with inPact to learn more about our work and how you can get involved.</p>
+
+          <div class="row">
+            <!-- First name -->
+            <div class="col">
+              <input id="fname" type="text" class="form-control green-section" placeholder="First name" required>
+            </div>
+            <!-- Last name -->
+            <div class="col">
+              <input id="flastname" type="text" class="form-control green-section" placeholder="Last name" required>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col">
+              <input id="femail" type="text" class="form-control green-section" placeholder="Email" required>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col">
+              <textarea id="fmessage" class="form-control green-section" placeholder="Message" name="message" rows="8" cols="80"></textarea>
+              <!-- <input id="fmessage" type="text" class="form-control green-section" placeholder="Message"> -->
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col">
+                <button type="submit" class="btn btn-dark">Submit</button>
+            </div>
+
+          </div>
+          <br>
+
+          <h5>Postal address</h3>
+          <ul class="list-unstyled">
+            <li>Maison Brulat, ADaPPT</li>
+            <li>Le Village, 01410 Lélex</li>
+            <li>France</li>
+          </ul>
+        </form>
+      </div>
+  </div>
+</section>
+
+{% endblock %}
