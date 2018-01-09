@@ -1,0 +1,16 @@
+
+<!-- This html block is inserted into both:
+   - each ArticleView directly after posting and
+   - each "for-loop" iteration in Blog.html -->
+<div class="card text-dark p-3" >
+  {% if p.img %}
+  <img class="card-img-top text-center" src="{{art.img}}" alt="Card image cap">
+  {% endif %}
+  <div class="card-block">
+    <h4 class="card-title">{{p.subject}}</h4>
+    <h6 class="card-subtitle mb-2 text-muted">{{p.created.strftime("%b %d, %Y")}} {{p.author}}</h6>
+    <p class="card-text">{{p._render_text | safe}}</p>
+    <a href="#" class="card-link">Read more</a>
+  </div>
+</div>
+<br>

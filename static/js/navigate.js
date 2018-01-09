@@ -124,7 +124,20 @@ $(function() {
   )
 
 
+  // Sign-up | Sign-in page
 
+  // Initialisieren, ohne Objekt möglich
+  // TabPages.init('myTabPage');
+  //
+  // // Um eine Page vor zu selektieren, braucht man das Objekt aber
+  // var tab = TabPages.init('myTabPage');
+  // tab.selectTab('page3');
+
+
+  // geht auch klassich
+  // var myTabElement = new TabPages('myTabPage');
+  // myTabElement.initTabs();
+  // myTabElement.selectTab('page3');
 
 
 });

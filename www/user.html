@@ -1,0 +1,166 @@
+{% extends "base.html"%}
+
+{% block content %}
+
+<section class="py-5 my-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-md-8">
+
+
+        <div class="card">
+
+        <div class="card-header">
+
+          <ul class="nav nav-tabs nav-fill card-header-tabs" role="tablist" data-tabs="tabs">
+
+            <!-- Tab functions without jQuery-->
+            <li id="sign-in-tab" class="nav-item">
+              <a{% if login== "active" %}  class="nav-link active"  {% else %}  class="nav-link" {% endif %}
+              href="#login-tab" data-target="#login-tab" role="tab" data-toggle="tab" aria-controls="login">Log In</a>
+            </li>
+            <li id="sign-up-tab" class="nav-item">
+              <a {% if signup== "active" %} class="nav-link active" {% else %}  class="nav-link" {% endif %} 
+
+              href="#signup-tab" data-target="#signup-tab" role="tab" data-toggle="tab" aria-controls="signup">Sign Up</a>
+            </li>
+
+            <!-- <li id="sign-in-tab" class="nav-item">
+              <a  class="nav-link active"  href="#login-tab" data-target="#login-tab" role="tab" data-toggle="tab" aria-controls="login">Log In</a>
+            </li> -->
+
+            <!-- <li id="sign-up-tab" class="nav-item">
+              <a  class="nav-link"  href="#signup-tab" data-target="#signup-tab" role="tab" data-toggle="tab" aria-controls="signup">Sign Up</a>
+            </li> -->
+
+
+          </ul>
+
+        </div>
+
+          <!-- Tab panes -->
+
+          <div class="tab-content text-center">
+            <!-- Log In -->
+            <div class="tab-pane active p-4" id="login-tab" role="tabpanel">
+              <h4 class="card-title">Log Into Your Account</h4>
+              <p class="card-text">Your inPact account is your portal to all projects that you are a part of, support and collaborate with!</p>
+
+              <form method="post">
+                <div class="row">
+                  <div class="col">
+                    <input type="text" class="form-control" placeholder="Email*" name="username" value="{{username}}">
+                  </div>
+
+                </div>
+                <br>
+                <div class="row">
+                  <div class="col">
+                    <input type="password" class="form-control" placeholder="Password*" name="password" value="{{password}}">
+
+                    <!-- <div class="text-danger">
+                      {{error_password}}
+                    </div> -->
+
+                  </div>
+                  <br>
+                  <div class="text-danger">
+                    {{error_username}}
+                  </div>
+                </div>
+                <br>
+                <button type="submit" class="btn btn-primary my-4 px-5">Log In</button>
+                <hr>
+                <br>
+              </form>
+            </div>
+
+            <!-- Sign Up -->
+            <div class="tab-pane p-4" id="signup-tab" role="tabpanel">
+              <h4 class="card-title my-2">Create Your inPact Account</h4>
+              <p class="card-text my-5 mx-5">Your inPact account is your portal to all projects that you are a part of, support and collaborate with!</p>
+
+              <form method="post">
+                <div class="row">
+                  <div class="col">
+                    <input type="text" class="form-control" placeholder="First Name*" name="username" value="{{username}}">
+
+                    <div class="text-danger">
+                      {{error_username}}
+                    </div>
+
+                  </div>
+                  <div class="col">
+                    <input type="text" class="form-control" placeholder="Last Name*" name="last_name" value="{{lname}}">
+
+                    <div class="text-danger">
+                      {{error_lname}}
+                    </div>
+                  </div>
+                </div>
+                <br>
+                <div class="row">
+                  <div class="col">
+                    <input type="text" class="form-control" placeholder="Email Address*" name="email" value="{{email}}">
+
+                    <div class="text-danger">
+                      {{error_email}}
+                    </div>
+
+                  </div>
+                </div>
+                <br>
+                <div class="row">
+                  <div class="col-md-6">
+                    <input type="password" class="form-control" placeholder="Password*" name="password" value="{{password}}">
+
+                    <div class="text-danger">
+                      {{error_password}}
+                    </div>
+
+                  </div>
+                  <br><br>
+                  <div class="col-md-6">
+                    <input type="password" class="form-control" placeholder="Confirm Password*" name="verify" value="{{verify}}">
+
+                    <div class="text-danger">
+                      {{error_verify}}
+                    </div>
+
+                  </div>
+                </div>
+                <br>
+                <button type="submit" class="btn btn-primary my-4 px-5">Sign Up</button>
+                <hr>
+                <br>
+              </form>
+
+
+
+              <div class="row text-muted">
+                <div class="col-md-12 text-center">
+                  <p>or sign-up with these services</p>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <a href="#" class="btn btn-primary my-4 px-5 form-control">Facebook</a>
+
+                </div>
+                <div class="col-md-6">
+                  <a href="#" class="btn btn-primary my-4 px-5 form-control">Google</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+{% endblock %}

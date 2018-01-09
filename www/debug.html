@@ -1,0 +1,47 @@
+{% extends "base.html"%}
+
+{% block content %}
+<section class="p-5">
+  <div class="container-fluid">
+    {% for user in users %}
+    <!-- Call the  render method in Article class (main.py) -->
+
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="card p-4">
+          <div class="card-block">
+            <h5>Key:</h4>
+            <p>{{user.key()}}</p>
+            <h5>Parent:</h5>
+            <p>{{user.parent}}</p>
+            <h5>Username:</h5>
+            <p>{{user.username}}</p>
+            <h5>Last name:</h5>
+            <p>{{user.last_name}}</p>
+            <h5>Pw:</h5>
+            <p>{{user.pw_hash}}</p>
+            <h5>Email:</h5>
+            <p>{{user.email}}</p>
+            <h5>User:</h5>
+            <p>{{user}}</p>
+
+            <div class="text-right">
+              <form method="post">
+                <button class="btn btn-success" type="submit" name="delete-user" value="{{user.key()}}">Delete User</button>
+              </form>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+    <br>
+
+    {% endfor %}
+  </div>
+</section>
+
+
+{% endblock %}
