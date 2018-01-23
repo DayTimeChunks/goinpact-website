@@ -38,12 +38,31 @@
                   <div class="col">
                     <textarea class="form-control green-section" placeholder="Content" name="content" rows="8" cols="80">{{content}}</textarea>
                   </div>
+
                 </div>
-
-
                 <br>
                 <div class="row">
-                  <div class="col">
+                  <div class="col-sm-3">
+                    <h5>Image (optional)</h5>
+                    <label class="custom-file">
+                    <input type="file" id="file" class="custom-file-input">
+                    <span class="custom-file-control"></span>
+                    </label>
+                  </div>
+                  <div class="col-sm-4">
+                    <h5>Map marker coordinates (optional)</h5>
+                    <input type="text" class="form-control" placeholder="Latitude" name="latitude" value="{{latitude}}">
+                    <br>
+                    <input type="text" class="form-control" placeholder="Longitude" name="longitude" value="{{longitude}}">
+                  </div>
+
+                  <!-- <button type="button" name="button">
+                    <input type="file" name="img">
+                  </button>  -->
+                </div>
+                <br>
+                <div class="row">
+                  <div class="col text-right">
                       <button type="submit" class="btn btn-dark">Submit</button>
                   </div>
                   <!-- <div class="col text-right">

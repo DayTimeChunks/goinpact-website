@@ -3,14 +3,29 @@
    - each ArticleView directly after posting and
    - each "for-loop" iteration in Blog.html -->
 <div class="card text-dark p-3" >
-  {% if p.img %}
-  <img class="card-img-top text-center" src="{{art.img}}" alt="Card image cap">
-  {% endif %}
   <div class="card-block">
     <h4 class="card-title">{{p.subject}}</h4>
     <h6 class="card-subtitle mb-2 text-muted">{{p.created.strftime("%b %d, %Y")}} {{p.author}}</h6>
     <p class="card-text">{{p._render_text | safe}}</p>
-    <a href="#" class="card-link">Read more</a>
+
   </div>
+  <!-- Image -->
+  {% if p.img %}
+  <img class="card-img-top text-center" src="{{p.img}}" alt="Card image cap">
+  {% endif %}
+
+  <a href="/blog/{{p.key()}}" class="card-link">Read more</a>
+  <!-- p.key() can be used to access the key of the article -->
+  <hr>
+
+  <!-- Map - move to permalinkpost -->
+  {% if p.map_url %}
+  <div class="card-block">
+    <h6 class="card-subtitle mb-2 text-muted">Town, Country</h6>
+    <p class="card-text">Location description....</p>
+    <img class="card-img-bottom img-fluid img-thumbnail" src="{{p.map_url}}" alt="Card image map">
+  </div>
+  {% endif %}
+
 </div>
 <br>

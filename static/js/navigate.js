@@ -26,6 +26,36 @@ $(function() {
     }
   });
 
+  // Cookies to determine USer sign in
+  var getCookies = function(){
+    var pairs = document.cookie.split(";");
+    var cookies = {};
+    for (var i=0; i<pairs.length; i++){
+      var pair = pairs[i].split("=");
+      cookies[(pair[0]+'').trim()] = unescape(pair[1]);
+    }
+    return cookies;
+  }
+  var cookies = getCookies();
+  console.log("cookie: " , cookies);
+
+  console.log("cookies.user_id: " , cookies.user_id);
+  if (cookies.user_id){
+    console.log("true");
+    $('#myinpact-ref').attr("href", "/logout")
+    $('#myinpact').text("Log Out")
+    // $('#signup-dd').addClass(" d-none ")
+    // $('#login-dd').addClass(" d-none ")
+    // $('#logout-dd').removeClass(" d-none ")
+  } else {
+    $('#myinpact-ref').attr("href", "/login")
+    $('#myinpact').text("My inPact")
+
+    // $('#signup-dd').removeClass(" d-none ")
+    // $('#login-dd').removeClass(" d-none ")
+    // $('#logout-dd').addClass(" d-none ")
+  }
+
   // $(document).ready(function(){
   //     $('[data-toggle="tooltip"]').tooltip();
   // });
