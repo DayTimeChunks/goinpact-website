@@ -183,7 +183,7 @@
 <section id="contact" class="">
     <div class="container-fluid green-section py-5">
       <div class="container gray-text">
-        <form class="" action="index.html" method="post">
+        <form  action="/" method="post">
 
           <br>
           <h1>Contact inPact</h1>
@@ -192,23 +192,32 @@
           <div class="row">
             <!-- First name -->
             <div class="col">
-              <input id="fname" type="text" class="form-control green-section" placeholder="First name" required>
+              <input id="fname" type="text" class="form-control green-section" placeholder="First name" name=fname value="{{fname}}" required>
+            </div>
+            <div class="text-danger">
+              {{error_fname}}
             </div>
             <!-- Last name -->
             <div class="col">
-              <input id="flastname" type="text" class="form-control green-section" placeholder="Last name" required>
+              <input id="flastname" type="text" class="form-control green-section" placeholder="Last name" name=lname required>
             </div>
           </div>
           <br>
           <div class="row">
             <div class="col">
-              <input id="femail" type="text" class="form-control green-section" placeholder="Email" required>
+              <input id="femail" type="text" class="form-control green-section" placeholder="Email" name=contact_email required>
             </div>
           </div>
           <br>
           <div class="row">
             <div class="col">
-              <textarea id="fmessage" class="form-control green-section" placeholder="Message" name="message" rows="8" cols="80"></textarea>
+              <input id="contact_subject" type="text" class="form-control green-section" placeholder="Subject" name=contact_subject required>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col">
+              <textarea id="fmessage" class="form-control green-section" placeholder="Message" name="contact_message" rows="8" cols="80" required></textarea>
               <!-- <input id="fmessage" type="text" class="form-control green-section" placeholder="Message"> -->
             </div>
           </div>

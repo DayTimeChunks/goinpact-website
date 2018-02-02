@@ -24,7 +24,7 @@
     <section class="py-5 text-light">
       <div class="container-fluid">
         <div class="container">
-          <form method="post">
+          <form enctype="multipart/form-data" method="post">
                 <h1>New Post</h1>
                 <div class="row">
                   <!-- Subject -->
@@ -42,13 +42,20 @@
                 </div>
                 <br>
                 <div class="row">
-                  <div class="col-sm-3">
+                  <div class="col-sm-4">
                     <h5>Image (optional)</h5>
-                    <label class="custom-file">
-                    <input type="file" id="file" class="custom-file-input">
+                    <!-- <label class="custom-file">
+                    <input type="file" id="file" class="custom-file-input" name="img">
                     <span class="custom-file-control"></span>
-                    </label>
+                    </label> -->
+                    <div class="form-group">
+                       <label for="exampleInputFile">File input</label>
+                       <input type="file" class="form-control-file" id="exampleInputFile" aria-describedby="fileHelp" name="img">
+                       <small id="fileHelp" class="form-text text-muted">This is some placeholder block-level help text for the above input. It's a bit lighter and easily wraps to a new line.</small>
+                     </div>
+
                   </div>
+
                   <div class="col-sm-4">
                     <h5>Map marker coordinates (optional)</h5>
                     <input type="text" class="form-control" placeholder="Latitude" name="latitude" value="{{latitude}}">

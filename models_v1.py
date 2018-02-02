@@ -34,11 +34,12 @@ def valid_pw(email, pw, h): # Course function
 
 class User(db.Model):
     username = db.StringProperty(required = True)
-    given_name = db.StringProperty(required = False) # googleUser
-    last_name = db.StringProperty(required = True)
+    last_name = db.StringProperty(required = False)
     email = db.StringProperty(required = True)
     pw_hash = db.StringProperty(required = False)
-    idtoken = db.StringProperty(required = False) # googleUser
+    # If google user
+    guser_id = db.StringProperty(required = False) # googleUser
+    nickname = db.StringProperty(required = False) # googleUser
 
     avatar = db.BlobProperty() # For storing images
     created = db.DateTimeProperty(auto_now_add = True)
@@ -51,6 +52,11 @@ class User(db.Model):
     def by_id(cls, uid):
         # 'cls' refers to the User class
         return cls.get_by_id(uid, parent = users_key())
+
+    @classmethod
+    def by_google_id(cls, gid):
+        # 'cls' refers to the User class
+        return cls.all().filter('guser_id =', gid).get()
 
     @classmethod
     def by_name(cls, username):
@@ -86,26 +92,6 @@ class User(db.Model):
         u = cls.by_email(email)
         if u and valid_pw(email, password, u.pw_hash):
             return u
-
-    @classmethod
-    def login_google(cls, idtoken):
-        u = cls.by_gtoken(idtoken)
-        if u:
-            return u
-        else:
-            # Test required fields (temporary)
-            username = 'username'
-            given_name = 'given_name' # for google-signin
-            last_name = 'last_name'
-            pw_hash = 'pw_hash'
-            email = 'emailx@emailx.com'
-            return User(parent = users_key(),
-                        username = username,
-                        given_name = given_name, # for google-signin
-                        last_name = last_name,
-                        pw_hash = pw_hash,
-                        email = email,
-                        idtoken = idtoken)
 
 # Blog stuff
 def blog_key(name='default'):

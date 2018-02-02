@@ -97,6 +97,8 @@ $(function() {
 
 
 
+// Draws an icon on the x,y coordinates of
+// the canvas context (ctx) declared above
   var MAX_HEIGHT = 100;
   function render(src, x, y){
   	var image = new Image();

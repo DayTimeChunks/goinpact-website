@@ -36,7 +36,7 @@
 function onSignIn(googleUser){
   var profile = googleUser.getBasicProfile();
   if (profile){
-    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID
+    console.log('JS google ID: ' + profile.getId()); // Do not send to your backend! Use an ID
     var id_token = googleUser.getAuthResponse().id_token;
     console.log('idtoken is: ' + id_token);
     var xhr = new XMLHttpRequest();
@@ -50,7 +50,7 @@ function onSignIn(googleUser){
     xhr.onload = function() {
       // Response will be the URL declared in 'POST'
       console.log('Signed in as: ' + xhr.responseText);
-      window.location.replace("/glogin")
+      // window.location.replace("/glogin")
     };
     // Specify the data you want to send in the send() method:
     xhr.send('idtoken=' + id_token); // RESULT: I cannot see a new header item with key 'idtoken' when I do check fo headers via 'urllib2.urlopen(url).headers.items()' on main.py

@@ -6,6 +6,7 @@ import urllib
 import urllib2
 
 from google.appengine.api import images
+from google.appengine.api import mail
 
 from xml.dom import minidom
 
@@ -23,8 +24,23 @@ from pybcrypt import bcrypt
 import models_v1
 from models_v1 import *
 
+# Authenticating users with google
+from google.appengine.api import users
+
+# Contact form messaging
+
+import smtplib
+from email.MIMEMultipart import MIMEMultipart
+from email.MIMEText import MIMEText
+
+# To DEBUG the app.
+import logging
+logging.info('First logging INFO!')
+logging.warning('First logging WARNING!')
+
 template_dir = os.path.join(os.path.dirname(__file__), 'www')
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
+                               extensions=['jinja2.ext.autoescape'],
                                autoescape=True) # autoescape is important for security!!
 
 
@@ -74,8 +90,8 @@ class Handler(webapp2.RequestHandler):
     def write(self, *a, **kw):
         self.response.out.write(*a, **kw)
     def render_str(self, template, **params):
-        t = jinja_env.get_template(template)
-        return t.render(params)
+        template = jinja_env.get_template(template)
+        return template.render(params) # parameters can also be a dictionary!
     def render(self, template, **kw):
         self.write(self.render_str(template, **kw))
 
@@ -85,6 +101,66 @@ class MainPage(Handler):
 
     def get(self):
         self.render_front() # draw main page
+
+    def post(self):
+        have_error = False
+        fname = self.request.get("fname")
+        lname = self.request.get("lname")
+        contact_subject = self.request.get("contact_subject")
+        contact_email = self.request.get("contact_email")
+        contact_message = self.request.get("contact_message")
+
+        params = dict(fname = fname, lname = lname, c_email=contact_email,
+                      c_subject=contact_subject, c_message=contact_message)
+
+        if not fname:
+            params['error_fname'] = "Please enter a first name"
+            have_error = True
+        if not lname:
+            params['error_lname'] = "Please enter a last name"
+            have_error = True
+        if not valid_email(contact_email):
+            params['error_email'] = "That's not a valid email"
+            have_error = True
+        if not contact_subject:
+            params['error_subject'] = "Please add a subject"
+            have_error = True
+        if not contact_message:
+            params['error_message'] = "Please add a message"
+            have_error = True
+
+        if have_error:
+            self.render("index.html", **params)
+        else:
+            sender = "daytightchunks@gmail.com"
+            to = "adappt@outlook.fr"
+            cc = "inpact.messenger@gmail.com"
+
+            full_name = fname + " " + lname
+            msg = "Dear Antoine, " + full_name + " is trying to contact us. \n"
+            msg += """ The message reads:
+
+            """
+            msg += contact_message
+            msg += "\n\n The email address to respond to is: \n\n"
+            msg += contact_email
+            msg += "\n\n This is an automated message from our Contact Page! ;)"
+
+            message = mail.EmailMessage()
+            message.sender = sender
+            message.to = [to, cc]
+            message.subject = contact_subject
+            message.body = msg
+            # message.check_initialized()
+            message.send()
+
+        self.redirect("/contacted")
+
+
+class Contacted(Handler):
+    def get(self):
+        self.render("contacted.html")
+
 
 class Support(Handler):
     def get(self):
@@ -110,10 +186,10 @@ class Blog(Handler):
         # Name should be 'idtoken'
         return self.request.cookies.get('idtoken')
 
-    def login(self, user):
+    def cookie_login(self, user):
         self.set_secure_cookie('user_id', str(user.key().id()))
 
-    def logout(self):
+    def cookie_logout(self):
         self.response.headers.add_header('Set-Cookie', 'user_id=; Path=/')
 
     def initialize(self, *a, **kw):
@@ -125,6 +201,9 @@ class Blog(Handler):
         # Keep track of every user
         self.user = uid and User.by_id(int(uid))
         print("Initialize self.user:", self.user)
+        if self.user:
+            u = User.by_id(int(uid))
+            print("Initialize self.useremail:", u.email)
 
 
 class BlogFront(Blog):
@@ -133,31 +212,20 @@ class BlogFront(Blog):
     def post(self):
         self.redirect("/blog/newpost")
 
-    # Collect all articles in the database to render (moed from Blog handler)
+    # Collect all articles in the database to render
     def get(self):
         # Query Method 1
         # arts = db.GqlQuery("SELECT * FROM Articles ORDER BY created DESC")
         # self.render("blog.html", arts=arts)
         # Query Method 2
         arts = Articles.all().order('-created')
-        # Avoid querying the database twice!
-        # i.e. Once here and once by jinja template
-
-
-
-        arts = list(arts)
+        arts = list(arts) # Avoid querying the db again in jinja template!
         if arts:
             for art in arts:
                 print(art.key())
-
-        # print("posts length:", len(posts))
-        if arts:
             self.render("blog.html", arts=arts)
-            # self.write(repr(arts))
-            # print(len(arts))
         else:
-            self.write(repr(arts))
-            print(arts)
+            self.render("blog.html")
 
     # def get(self):
     #     # Handle user cookies:
@@ -278,8 +346,6 @@ class NewPost(Blog):
 
         # TODO:
         # Fix zoom level on maps, or make it dynamic!
-
-
         # loc = db.GeoPt(50.954873, 6.938495)
         # lat = 50.954873
         # lon = 6.938495
@@ -298,8 +364,9 @@ class NewPost(Blog):
 
             # a.location2 = loc
             if img:
-                img = images.resize(img, 400, 300)
-                a.image = img
+                # img = images.resize(img, 400, 300)
+                print("img: " , str(img))
+                a.image = db.Blob(str(img))
 
             a.put() # Saves the art object to the database
             article_id = a.key().id()
@@ -328,14 +395,27 @@ class ArticleView(Blog):
             # Include your own 404 html response
             return
 
-        # subject = article.subject
-        # content = article.content
-        # self.render("mypost.html", subject=subject, content=content)
         self.render("permalinkpost.html", article=article)
 
 class PermTest(Blog):
     def get(self):
-        self.render("permalinktest.html")
+        sender = "daytightchunks@gmail.com"
+        to = "pablo.alv.zal@gmail.com"
+        # mail.send_mail(sender=sender,
+        #                to=to,
+        #                subject="Your subject test",
+        #                body="This is your message"
+        #                )
+        # self.render("permalinktest.html")
+
+        message = mail.EmailMessage()
+        message.sender = sender
+        message.to = [to, sender]
+        message.subject = 'a subject'
+        message.body = 'This is an email to you'
+        # message.check_initialized()
+        message.send()
+        self.redirect("/")
 
 # Sign-up required functions
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
@@ -358,7 +438,9 @@ class SignUp(Blog):
     #  Memcash will handle the database registration via atomic operations
 
     def get(self):
-        self.render("signup.html")
+        g_url = users.create_login_url('/login') # Will redirect back here to get() if g_url button is used.
+        g_url_txt = 'Sign up with Google'
+        self.render("signup.html", g_url=g_url, g_url_txt=g_url_txt)
 
     def post(self):
         have_error = False
@@ -404,132 +486,90 @@ class Register(SignUp):
         else:
             u = User.register(self.username, self.given_name, self.last_name, self.password, self.email)
             u.put()
-            self.login(u) # Used for new users and old users
+            self.cookie_login(u) # Used for new users and old users
             self.redirect("/welcome")
 
 class Login(Blog):
     def get(self):
-        idtoken = self.read_google_cookie()
-        if (idtoken):
-            print('Google idtoken on /login get():', idtoken)
-            self.redirect("/glogin")
+        # If user chooses Google Sign-in
+        user = users.get_current_user() # Returns email address
+        if user:
+            nickname = user.nickname()
+            guser_id = user.user_id() # This is unique, email address may change.
+            email = user.email()
+            logging.warning("guser_id: %s" % guser_id)
+            logging.warning("email: %s" % user.email())
+            logging.warning("user: %s" % user)
 
-        # API course section...
-        # p = urllib2.urlopen('https://goinpact0.appspot.com/login')
-        # p = urllib2.urlopen('https://www.example.com')
-        # c = p.read()
-        # print(p.headers.items())
-        # print('Directory')
-        # print(dir(p))
-        # print('Header items')
-        # print(p.headers.items())
-        #
-        # print('Search by Key on headers')
-        # print(p.headers['content-type'])
-        # print(p.headers['server'])
+            # Check if google user exists in database:
+            u = User.by_google_id(guser_id)
+            old_user = User.by_email(email)
 
-        # p = urllib2.urlopen('http://www.nytimes.com/services/xml/rss/nyt/GlobalHome.xml')
-        # c = p.read()
-        # x = minidom.parseString(c)
-        # print('Dir')
-        # # print(dir(x))
-        # print('Elements')
-        # print(x.getElementsByTagName('item').length)
+            # Old inPact user, now using Google Signin for the first time
+            if old_user and not u:
+                old_user.user_id = user_id
+                old_user.nickname = nickname
+                old_user.email = email
+                old_user.put()
+                self.cookie_login(u)
+            # Both google details and old user exists
+            elif u and old_user:
+                msg = 'User already exists'
+                logging.warning(msg)
+                self.cookie_login(u)
+            else:
+                u = User(parent = users_key(),
+                         guser_id = guser_id,
+                         email = email,
+                         username = nickname,
+                         lastname = 'Guser',
+                         nickname = nickname)
+                u.put()
+                self.cookie_login(u) # Used for new users and old users
 
-        self.render("login.html")
+            logging.warning('user True, get_current_user(): %s' % user)
+            self.redirect("/welcome")
+
+        else:
+            g_url = users.create_login_url(self.request.uri) # Will redirect back here to get() if g_url button is used.
+            g_url_txt = 'Login with Google'
+            self.render("login.html", g_url=g_url, g_url_txt=g_url_txt)
+
 
     def post(self):
         email = self.request.get("email")
-        # self.email = self.request.get("email")
         password = self.request.get("password")
 
         # Check is user registered via our form
         u = User.login(email, password)
-
-        # Check is user registered vai google sign-in
-        # 1) Check that the id_token provided by google matches an id_token of an exisiting user
-
         if u:
-            self.login(u)
+            self.cookie_login(u)
             self.redirect("/welcome")
         else:
             msg = "Invalid email and password"
             self.render("login.html", error_username = msg)
 
-class Glogin(Blog):
-    def get(self):
-        # get_token(self)
-        # ####
-        # Check is user registered vai google sign-in
-        # 1) Check that the id_token provided by google matches an id_token of an exisiting user
-        # token = self.read_google_cookie()
-        # print('Google idtoken:', token)
-        # self.render('welcome.html')
-
-        # ####
-        # API approach to getting header information
-
-        # p = urllib2.urlopen('https://goinpact0.appspot.com/glogin')
-        # c = p.read()
-        # print(p.headers.items())
-
-        # url = 'http://www.google.com/humans.txt'
-        url = 'http://localhost:8080/tokensignin'
-        try:
-            result = urllib2.urlopen(url)
-            print(result.headers.items())
-            # self.response.out.write(result.read())
-            self.response.out.write(result.headers.items())
-
-        except urllib2.URLError, e:
-            self.write(e.fp.read())
-            # logging.exception('Caught exception fetching url')
-
-
-
-        # ####
-        # Once we have a validated token...
-
-        # u_google = User.login_google(idtoken)
-        # u_google.put()
-        # if u_google:
-        #     self.login(u_google) # Sets secure cookie for user id (own, not google's)
-        #     self.redirect("/welcome")
-        # else:
-        #     msg = "Invalid email and password"
-        #     self.render("login.html", error_username = msg)
-
-
-        # ... if not, create a new user with googleUser info
-        #  ... if yes, get User from database via idtoken
-
 class Logout(Blog):
     # reset user_id cookie to nothing
+    # check if user signed in with Google
     def get(self):
-        self.logout()
-        # self.redirect("/login")
-        self.redirect("/blog")
+        user = users.get_current_user()
+        if user: # Google user?
+            self.cookie_logout()
+            self.redirect(users.create_logout_url("/"))
+            # self.write(repr(users.get_current_user() ) )
+        else:
+            self.cookie_logout()
+            self.redirect("/")
 
 class Welcome(Blog):
-    # TODO
     # This will be "my inPact" page..
     def get(self):
-        # Check if user id (uid) exists
-        # We have access to it because of the Handler class inheritance
-        print("self.user: ", self.user)
         if self.user:
-            self.render('welcome.html', username = self.user.username)
+            self.render('welcome.html',
+                        username = self.user.username)
         else:
             self.redirect('/login')
-
-        # Handle user cookies:
-        # userid_str = self.request.cookies.get('user_id')
-        # if userid_str:
-        #     name = userid_str.split("|")[0]
-        # else:
-        #     name = "Not logged id"
-        # self.response.out.write("Welcome, %s" % name)
-
 
 # To see the local datastore:
 # localhost:8000/datastore
@@ -605,7 +645,10 @@ def update_schema_task(cursor=None, num_updated=0, batch_size=100):
             'update_schema_task complete with {0} updates!'.format(
                 num_updated))
 
+
+
 app = webapp2.WSGIApplication([('/', MainPage),
+                               ('/contacted', Contacted),
                                ('/support', Support),
                                ('/team', Team),
                                ('/blog/?', BlogFront),
@@ -613,7 +656,6 @@ app = webapp2.WSGIApplication([('/', MainPage),
                                ('/blog/newpost', NewPost),
                                ('/signup', Register),
                                ('/login', Login),
-                               ('/glogin', Glogin),
                                ('/logout', Logout),
                                ('/welcome', Welcome),
                                ('/debug', Debug),
