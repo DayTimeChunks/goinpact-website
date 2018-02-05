@@ -1,4 +1,7 @@
 
+#  Console datastore
+# http://localhost:8000/instances
+
 
 # Get the Google database
 from google.appengine.ext import db
