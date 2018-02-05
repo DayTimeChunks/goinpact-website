@@ -219,7 +219,8 @@ class BlogFront(Blog):
         # self.render("blog.html", arts=arts)
         # Query Method 2
         arts = Articles.all().order('-created')
-        arts = list(arts) # Avoid querying the db again in jinja template!
+        # Avoid querying the db again in jinja template!
+        arts = list(arts) # Make a list of art objects
         if arts:
             for art in arts:
                 print(art.key())
@@ -227,36 +228,28 @@ class BlogFront(Blog):
         else:
             self.render("blog.html")
 
-    # def get(self):
-    #     # Handle user cookies:
-    #     userid_str = self.request.cookies.get('user_id')
-    #     if userid_str:
-    #         name = userid_str.split("|")[0]
-    #
-    #     # Track user visits
-    #     visits = 0
-    #
-    #     cookie_val = read_secure_cookie('visits')
-    #     if cookie_val:
-    #         visits = int(cookie_val)
-    #     visits += 1
-    #
-    #     # Update cookie
-    #     set_secure_cookie('visits', visits)
-    #
-    #     # Older code to do the above
-    #     # salt = None
-    #     # visit_cookie_str = self.request.cookies.get('visits')
-    #     # Separate value and hash, check hash
-    #     # if visit_cookie_str:
-    #     #     salt = visit_cookie_str.split("|")[2]
-    #     #     cookie_val = check_secure_withsalt(visit_cookie_str)
-    #     #     if cookie_val:
-    #     #         visits = int(cookie_val)
-    #     # new_cookie_val = hash_str(str(visits), salt)
-    #     # self.response.headers.add_header('Set-Cookie', 'visits=%s' % str(new_cookie_val))
-    #
-    #     self.render_blog()
+class BlogFrontJson(Blog):
+    # This handler converts each blog article into a
+    # json readable object for computer parsing.
+    def get(self):
+        import json
+        import datetime
+        arts = Articles.all().order('-created')
+        arts = list(arts)
+        json_arts = []
+        for a in arts:
+            new_dict = {}
+            new_dict['content'] = a.content
+            new_dict['created'] = a.created.strftime("%a, %d %b %Y %H:%M:%S")
+            # t = a.last_modified
+            new_dict['last_modified'] = a.last_modified.strftime("%a, %d %b %Y %H:%M:%S")
+            new_dict['subject'] = a.subject
+            json_arts.append(new_dict)
+
+        json_arts = json.dumps(json_arts)
+        self.write(json_arts)
+
+        # self.write()
 
 # Use this for the course.
 # Later, allow user to provide the coordinates
@@ -383,19 +376,36 @@ class ArticleView(Blog):
     # PostPage where Permalink.hmtml is run
     # article_id is passed from the webapp2 regex expression
     def get(self, article_id):
-        # One way
-        article = Articles.get_by_id(int(article_id))
-        #  Another way (solution)
-        # key = db.Key.from_path('Post', int(article_id), parent=blog_key())
-        # post = db.get(Key)
+        # Parse article_id, checking if ends in .json
+        # If json, return a json object, othersie find the article
+        parsed = article_id.split(".")
+        if len(parsed) == 1:
+            # One way
+            article = Articles.get_by_id(int(article_id))
+            #  Another way (solution)
+            # key = db.Key.from_path('Post', int(article_id), parent=blog_key())
+            # post = db.get(Key)
 
-        # In case of user hack
-        if not article:
-            self.error(404)
-            # Include your own 404 html response
-            return
+            # In case of user hack
+            if not article:
+                self.error(404)
+                # Include your own 404 html response
+                return
 
-        self.render("permalinkpost.html", article=article)
+            self.render("permalinkpost.html", article=article)
+        else:
+            import json
+            import datetime
+            article = Articles.get_by_id(int(parsed[0]))
+            json_art = [{"content": article.content,
+                         "created": article.created.strftime("%a, %d %b %Y %H:%M:%S"),
+                         "last_modified": article.last_modified.strftime("%a, %d %b %Y %H:%M:%S"),
+                         "subject": article.subject}]
+            json_art = json.dumps(json_art)
+            self.write(json_art)
+
+
+
 
 class PermTest(Blog):
     def get(self):
@@ -651,8 +661,9 @@ app = webapp2.WSGIApplication([('/', MainPage),
                                ('/contacted', Contacted),
                                ('/support', Support),
                                ('/team', Team),
-                               ('/blog/?', BlogFront),
-                               ('/blog/(\d+)', ArticleView),
+                               ('/blog/?', BlogFront), # See note below on "?"
+                               ('/blog/.json', BlogFrontJson),
+                               ('/blog/(\S+)', ArticleView),
                                ('/blog/newpost', NewPost),
                                ('/signup', Register),
                                ('/login', Login),
@@ -664,10 +675,15 @@ app = webapp2.WSGIApplication([('/', MainPage),
                               debug = True)  # CHange to False during production
 # The debug=True parameter tells webapp2 to print stack traces to the browser output if a handler encounters an error or raises an uncaught exception. This option should be removed before deploying the final version of your application, otherwise you will inadvertently expose the internals of your application.
 
-
+# BlogFront Handler
+# "?" means handler will match if the slash at the end is there or not. It is a way for the handler not to care if a slash is included or not. Equivalent to : '/blog'
 
 # Regex Notes:
 # \d is a digit (a character in the range 0-9), and + means 1 or more times. So, \d+ is 1 or more digits.
+# \w alphanumeric [a-zA-Z0-9_]
+# \S matches any non-whitespace character; this is equivalent to the set [^ \t\n\r\f\v]
+
+# https://docs.python.org/2/library/re.html
 
 # On URL encoding:
 # If you use such URL-safe keys, don't use sensitive data such as email addresses as entity identifiers. A possible solution would be to use a hash of the sensitive data as the identifier.
