@@ -663,7 +663,7 @@ app = webapp2.WSGIApplication([('/', MainPage),
                                ('/team', Team),
                                ('/blog/?', BlogFront), # See note below on "?"
                                ('/blog/.json', BlogFrontJson),
-                               ('/blog/(\S+)', ArticleView),
+                               ('/blog/(\d+)|[json]', ArticleView),
                                ('/blog/newpost', NewPost),
                                ('/signup', Register),
                                ('/login', Login),
