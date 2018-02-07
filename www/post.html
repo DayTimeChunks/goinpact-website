@@ -10,11 +10,13 @@
 
   </div>
   <!-- Image -->
-  {% if p.img %}
+  <!-- TODO: serve image! -->
+  <!-- {% if p.image_url %}
   <img class="card-img-top text-center" src="{{p.image}}" alt="Card image cap">
-  {% endif %}
+  {% endif %} -->
+  <img src="/thumbnailer/{{p.key.id()}}" alt="">
 
-  <a href="/blog/{{p.key()}}" class="card-link">Read more</a>
+  <a href="/blog/{{p.key}}" class="card-link">Read more</a>
   <!-- p.key() can be used to access the key of the article -->
   <hr>
 
