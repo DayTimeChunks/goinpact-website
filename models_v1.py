@@ -4,8 +4,10 @@
 
 
 # Get the Google database
-from google.appengine.ext import db
-# from google.appengine.ext import ndb
+# from google.appengine.ext import db
+from google.appengine.ext import ndb
+# Migration documentation
+# https://cloud.google.com/appengine/docs/standard/python/ndb/db_to_ndb
 
 import os
 import jinja2
@@ -19,7 +21,8 @@ jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
 
 # User stuff
 def users_key(group = 'default'):
-    return db.Key.from_path('users', group)
+    # return db.Key.from_path('users', group)
+    return ndb.Key('users', group)
 
 def make_pw_hash(email, pw, salt = None): # Course function
     if not salt:
@@ -35,18 +38,18 @@ def valid_pw(email, pw, h): # Course function
     salt = h.split("|")[0]
     return h == make_pw_hash(email, pw, salt)
 
-class User(db.Model):
-    username = db.StringProperty(required = True)
-    last_name = db.StringProperty(required = False)
-    email = db.StringProperty(required = True)
-    pw_hash = db.StringProperty(required = False)
+class User(ndb.Model):
+    username = ndb.StringProperty(required = True)
+    last_name = ndb.StringProperty(required = False)
+    email = ndb.StringProperty(required = True)
+    pw_hash = ndb.StringProperty(required = False)
     # If google user
-    guser_id = db.StringProperty(required = False) # googleUser
-    nickname = db.StringProperty(required = False) # googleUser
+    guser_id = ndb.StringProperty(required = False) # googleUser
+    nickname = ndb.StringProperty(required = False) # googleUser
 
-    avatar = db.BlobProperty() # For storing images
-    created = db.DateTimeProperty(auto_now_add = True)
-    last_modified = db.DateTimeProperty(auto_now = True)
+    avatar = ndb.BlobProperty() # For storing images
+    created = ndb.DateTimeProperty(auto_now_add = True)
+    last_modified = ndb.DateTimeProperty(auto_now = True)
 
     # @decorator:
     # means that you can call the
@@ -99,30 +102,34 @@ class User(db.Model):
 # Blog stuff
 def blog_key(name='default'):
     # Method to organize the database in case more than one blog.
-    return db.Key.from_path('blogs', name)
+    # return db.Key.from_path('blogs', name)
+    return ndb.Key('blogs', name)
 
-class Articles(db.Model):
+class Articles(ndb.Model):
     # create entities
-    subject = db.StringProperty(required = True)
-    content = db.TextProperty(required = True)
-    image = db.BlobProperty() # For storing images
-    created = db.DateTimeProperty(auto_now_add = True)
-    last_modified = db.DateTimeProperty(auto_now = True)
+    subject = ndb.StringProperty(required = True)
+    content = ndb.TextProperty(required = True)
+    image = ndb.BlobProperty() # For storing images
+    image_key = ndb.BlobKeyProperty()
+    created = ndb.DateTimeProperty(auto_now_add = True)
+    last_modified = ndb.DateTimeProperty(auto_now = True)
     # Careful when naming properties, if
     # create a model, and get an error when using it first it will break that
     # propert and the name assigned (e.g. "location") won't work again.
     # My mistake was when I assigned
     # a['location'] = ...  instead of:
     # a.location = ...
-    # location = db.GeoPtProperty()
-    location2 = db.GeoPtProperty()
-    coords = db.GeoPtProperty()
-    map_url = db.StringProperty()
+    # location = ndb.GeoPtProperty()
+    location2 = ndb.GeoPtProperty()
+    coords = ndb.GeoPtProperty()
+    map_url = ndb.StringProperty()
 
     def render(self):
         self._render_text = self.content.replace('\n', '<br>')
         # Use global method render_str()
         return render_str("post.html", p = self) # self is 'art' (ie. one article)
+
+
 
 
 

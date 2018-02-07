@@ -6,6 +6,7 @@ import urllib
 import urllib2
 
 from google.appengine.api import images
+from google.appengine.ext import blobstore
 from google.appengine.api import mail
 
 from xml.dom import minidom
@@ -187,7 +188,8 @@ class Blog(Handler):
         return self.request.cookies.get('idtoken')
 
     def cookie_login(self, user):
-        self.set_secure_cookie('user_id', str(user.key().id()))
+        # self.set_secure_cookie('user_id', str(user.key().id())) # old db
+        self.set_secure_cookie('user_id', str(user.key.integer_id())) # old db
 
     def cookie_logout(self):
         self.response.headers.add_header('Set-Cookie', 'user_id=; Path=/')
@@ -207,7 +209,6 @@ class Blog(Handler):
 
 
 class BlogFront(Blog):
-
     # Open new page on "New post" button click
     def post(self):
         self.redirect("/blog/newpost")
@@ -218,13 +219,13 @@ class BlogFront(Blog):
         # arts = db.GqlQuery("SELECT * FROM Articles ORDER BY created DESC")
         # self.render("blog.html", arts=arts)
         # Query Method 2
-        arts = Articles.all().order('-created')
+        # arts = Articles.all().order('-created') # Old db
+        arts = Articles.query().order(-Articles.created) # new ndb
         # Avoid querying the db again in jinja template!
         arts = list(arts) # Make a list of art objects
         if arts:
-            for art in arts:
-                print(art.key())
             self.render("blog.html", arts=arts)
+            # self.render("blog.html", arts=new_art_list)
         else:
             self.render("blog.html")
 
@@ -234,7 +235,7 @@ class BlogFrontJson(Blog):
     def get(self):
         import json
         import datetime
-        arts = Articles.all().order('-created')
+        arts = Articles.query().order(-Articles.created)
         arts = list(arts)
         json_arts = []
         for a in arts:
@@ -279,7 +280,7 @@ def get_coords(ip):
         if coords:
             lon, lat = coords.split(',')
             # print(lat, lon)
-            return db.GeoPt(lat, lon)
+            return ndb.GeoPt(lat, lon)
 
 def gmaps_img(points):
     # points is a list of tuples, [[lat, lon], [lat, lon]]
@@ -333,7 +334,7 @@ class NewPost(Blog):
         # Get new post data
         subject = self.request.get("subject")
         content = self.request.get("content")
-        img = self.request.get("img")
+        image = self.request.get("img")
         lat = str(self.request.get("latitude")).strip()
         lon = str(self.request.get("longitude")).strip()
 
@@ -356,18 +357,28 @@ class NewPost(Blog):
                 a.map_url = gmaps_img([lat, lon])
 
             # a.location2 = loc
-            if img:
+            if image:
                 # img = images.resize(img, 400, 300)
-                print("img: " , str(img))
-                a.image = db.Blob(str(img))
+                # img_data = img.read()
+                # print("img: " , str(img_data))
+                a.image = image
+                # a.image_url = get_serving_url(a.key)
+
 
             a.put() # Saves the art object to the database
-            article_id = a.key().id()
+            # article_id = a.key().id() # old db
+            article_id = a.key.integer_id() # new ndb
             # One way:
             # self.redirect("/blog/" + str(article_id), article_id)
             # Another way (solution):
             # Get will extract whatever is after '/blog/'
-            self.redirect("/blog/%s" % str(article_id))
+            # self.redirect("/blog/%s" % str(article_id))
+            # TODO: Temporary redirect to a new location without jinja
+            # 1. direct to permalink post
+            # 2. on permalin khtml, include the link href= handler + ID
+            # 3. on Thumnailer, leave as is...
+            self.render('permalinktest.html', article_id = article_id)
+            # self.redirect("/thumbnailer/%s" % str(article_id))
         else:
             error = "Please include both subject and content."
             self.render_post(subject=subject, content=content, error=error)
@@ -405,9 +416,33 @@ class ArticleView(Blog):
             self.write(json_art)
 
 
+# This class renders the image once in the html
+class Thumbnailer(Blog):
+    def get(self, article_id):
+        article = Articles.get_by_id(int(article_id))
+        thumbnail = None
+        if article:
+            img = images.Image(article.image)
+            if img:
+                img.resize(width=80, height=100)
+                thumbnail = img.execute_transforms(output_encoding=images.JPEG)
+                self.response.headers['Content-Type'] = 'image/jpeg'
+                self.response.out.write(thumbnail)
+            else:
+                return
+        else:
+            return
+        # self.render("permalinktest.html", thumbnail = thumbnail)
 
 
-class PermTest(Blog):
+# class ImgServe(webapp2.Requesthandler):
+#     def get(self, resource):
+#         pass
+
+
+
+# TODO: Changed from PermTest
+class EmailTest(Blog):
     def get(self):
         sender = "daytightchunks@gmail.com"
         to = "pablo.alv.zal@gmail.com"
@@ -585,7 +620,7 @@ class Welcome(Blog):
 # localhost:8000/datastore
 class Debug(Blog):
     def get(self):
-        users = User.all().order('-username')
+        users = User.query().order('-username')
         if users:
             print("Users", users)
             self.render("debug.html", users = users)
@@ -640,7 +675,7 @@ def update_schema_task(cursor=None, num_updated=0, batch_size=100):
     # Save the updated entities.
     if to_put:
         # ndb.put_multi(to_put)
-        db.put_multi(to_put)
+        ndb.put_multi(to_put)
         num_updated += len(to_put)
         logging.info(
             'Put {} entities to Datastore for a total of {}'.format(
@@ -664,13 +699,14 @@ app = webapp2.WSGIApplication([('/', MainPage),
                                ('/blog/?', BlogFront), # See note below on "?"
                                ('/blog/.json', BlogFrontJson),
                                ('/blog/(\d+)|[json]', ArticleView),
+                               ('/thumbnailer/(\d+)', Thumbnailer),
                                ('/blog/newpost', NewPost),
                                ('/signup', Register),
                                ('/login', Login),
                                ('/logout', Logout),
                                ('/welcome', Welcome),
-                               ('/debug', Debug),
-                               ('/permalinktest', PermTest) #, ('/update_schema', UpdateSchemaHandler)
+                               ('/debug', Debug) # ,
+                               # ('/permalinktest/(\d+)', PermTest) #, ('/update_schema', UpdateSchemaHandler)
                               ],
                               debug = True)  # CHange to False during production
 # The debug=True parameter tells webapp2 to print stack traces to the browser output if a handler encounters an error or raises an uncaught exception. This option should be removed before deploying the final version of your application, otherwise you will inadvertently expose the internals of your application.
