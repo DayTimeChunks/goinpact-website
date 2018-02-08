@@ -52,7 +52,25 @@ footer, .wrapper:after {
   /*height:calc(100% - 50px);*/
 }
 
+/* module and fade out truncate text overflow on post.html */
+.module{
+  overflow: hidden;
+}
 
+.fadeout {
+  position: relative;
+  height: 7.2em; /* exactly X lines @ 1.2em * line */
+}
+.fadeout:after {
+  content: "";
+  text-align: right;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 70%;
+  height: 1.2em;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 50%);
+}
 
 /*
 .short  .img-responsive {

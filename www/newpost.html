@@ -42,25 +42,33 @@
                 </div>
                 <br>
                 <div class="row">
-                  <div class="col-sm-4">
-                    <h5>Image (optional)</h5>
+                  <div class="col-md-4">
+                    <h5>Images <small class="text-muted">(optional)</small></h5>
                     <!-- <label class="custom-file">
                     <input type="file" id="file" class="custom-file-input" name="img">
                     <span class="custom-file-control"></span>
                     </label> -->
                     <div class="form-group">
-                       <label for="exampleInputFile">File input</label>
-                       <input type="file" class="form-control-file" id="exampleInputFile" aria-describedby="fileHelp" name="img">
-                       <small id="fileHelp" class="form-text text-muted">This is some placeholder block-level help text for the above input. It's a bit lighter and easily wraps to a new line.</small>
+                       <!-- <label for="exampleInputFile">File input</label> -->
+                       <label class="pt-2">Large image (1st)</label>
+                       <input type="file" class="form-control-file" id="exampleImgFile1" aria-describedby="fileHelp" name="img_lg">
+                       <label class="pt-2">Medium image (2nd)</label>
+                       <input type="file" class="form-control-file" id="exampleImgFile2" aria-describedby="fileHelp" name="img_md">
+                       <label class="pt-2">Small image (3rd)</label>
+                       <input type="file" class="form-control-file" id="exampleImgFile3" aria-describedby="fileHelp" name="img_sm">
+                       <br>
+                       <small id="fileHelp" class="form-text text-muted">Currently only 3 images (max) are supported. They will formatted as large, medium and small and shown in the order stated here.</small>
                      </div>
 
                   </div>
 
-                  <div class="col-sm-4">
-                    <h5>Map marker coordinates (optional)</h5>
+                  <div class="col-md-4">
+                    <h5>Map marker coordinates <small class="text-muted">(optional)</small></h5>
                     <input type="text" class="form-control" placeholder="Latitude" name="latitude" value="{{latitude}}">
                     <br>
                     <input type="text" class="form-control" placeholder="Longitude" name="longitude" value="{{longitude}}">
+                    <br>
+                    <small id="mapHelp" class="form-text text-muted">If you want to include a map on the main article, include the latitude and longitude here. The lat and lon values can be extracted from google maps.</small>
                   </div>
 
                   <!-- <button type="button" name="button">

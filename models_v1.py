@@ -62,24 +62,25 @@ class User(ndb.Model):
     @classmethod
     def by_google_id(cls, gid):
         # 'cls' refers to the User class
-        return cls.all().filter('guser_id =', gid).get()
+        # return cls.query().filter('guser_id =', gid).get()
+        return cls.query(cls.guser_id == gid).get()
 
     @classmethod
     def by_name(cls, username):
         # Query the db without GQL
-        u = cls.all().filter('username =', username).get()
+        u = cls.query(cls.username == username).get()
         return u
 
     @classmethod
     def by_email(cls, email):
         # Query the db without GQL
-        u = cls.all().filter('email =', email).get()
+        u = cls.query(cls.email == email).get()
         return u
 
     @classmethod
     def by_gtoken(cls, idtoken):
         # Query the db without GQL
-        u = cls.all().filter('idtoken =', idtoken).get()
+        u = cls.query(cls.idtoken == idtoken).get()
         return u
 
     @classmethod
@@ -107,10 +108,13 @@ def blog_key(name='default'):
 
 class Articles(ndb.Model):
     # create entities
+    author = ndb.StringProperty(required = False)
     subject = ndb.StringProperty(required = True)
     content = ndb.TextProperty(required = True)
-    image = ndb.BlobProperty() # For storing images
-    image_key = ndb.BlobKeyProperty()
+    image_lg = ndb.BlobProperty() # For storing images
+    image_md = ndb.BlobProperty() # For storing images
+    image_sm = ndb.BlobProperty() # For storing images
+    has_image = ndb.BooleanProperty()
     created = ndb.DateTimeProperty(auto_now_add = True)
     last_modified = ndb.DateTimeProperty(auto_now = True)
     # Careful when naming properties, if

@@ -334,7 +334,9 @@ class NewPost(Blog):
         # Get new post data
         subject = self.request.get("subject")
         content = self.request.get("content")
-        image = self.request.get("img")
+        image_lg = self.request.get("img_lg")
+        image_md = self.request.get("img_md")
+        image_sm = self.request.get("img_sm")
         lat = str(self.request.get("latitude")).strip()
         lon = str(self.request.get("longitude")).strip()
 
@@ -347,6 +349,8 @@ class NewPost(Blog):
 
         if subject and content:
             a = Articles(subject=subject, content=content)
+            a.author = self.user.username
+            a.has_image = False
             # Another way with parent (course solution)
             # a = Articles(parent= blog_key(), subject=subject, content=content)
 
@@ -356,14 +360,16 @@ class NewPost(Blog):
                 # a.coords = db.GeoPt(lat, lon)
                 a.map_url = gmaps_img([lat, lon])
 
-            # a.location2 = loc
-            if image:
-                # img = images.resize(img, 400, 300)
-                # img_data = img.read()
-                # print("img: " , str(img_data))
-                a.image = image
-                # a.image_url = get_serving_url(a.key)
-
+            # Check and store uploaded images
+            if image_lg:
+                a.has_image = True
+                a.image_lg = image_lg
+            if image_md:
+                a.has_image = True
+                a.image_md = image_md
+            if image_sm:
+                a.has_image = True
+                a.image_sm = image_sm
 
             a.put() # Saves the art object to the database
             # article_id = a.key().id() # old db
@@ -415,17 +421,18 @@ class ArticleView(Blog):
             json_art = json.dumps(json_art)
             self.write(json_art)
 
-
+# TODO:
+# Enable multiple images....
 # This class renders the image once in the html
 class Thumbnailer(Blog):
     def get(self, article_id):
         article = Articles.get_by_id(int(article_id))
         thumbnail = None
         if article:
-            img = images.Image(article.image)
-            if img:
-                img.resize(width=80, height=100)
-                thumbnail = img.execute_transforms(output_encoding=images.JPEG)
+            img_lg = images.Image(article.image_lg)
+            if img_lg:
+                img_lg.resize(width=400, height=265)
+                thumbnail = img_lg.execute_transforms(output_encoding=images.JPEG)
                 self.response.headers['Content-Type'] = 'image/jpeg'
                 self.response.out.write(thumbnail)
             else:
@@ -567,7 +574,6 @@ class Login(Blog):
                          guser_id = guser_id,
                          email = email,
                          username = nickname,
-                         lastname = 'Guser',
                          nickname = nickname)
                 u.put()
                 self.cookie_login(u) # Used for new users and old users
