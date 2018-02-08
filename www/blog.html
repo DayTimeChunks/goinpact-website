@@ -6,10 +6,17 @@
   <div class="container">
     <br>
     <div class="row py-4">
-      <div class="col-lg-2"></div>
+      <div class="col-lg-1 pb-3">
+        <form method="post">
+          <!-- TODO: Make visible only for Antoine -->
+          <button class="btn btn-success" type="submit" name="new-post">New Post</button>
+        </form>
+
+      </div>
+      <div class="col-lg-1"></div>
       <div class="col-lg-6">
         <!-- <h2>Blog Posts</h2> -->
-        
+
         {% for art in arts %}
         <!-- Call the  render() method in the Articles class (main.py) -->
         <!-- Method will open "post.html" template with formated text
@@ -21,13 +28,7 @@
         <h4>Featured Posts</h4>
 
       </div>
-      <div class="col-lg-1">
-        <form method="post">
-          <!-- TODO: Make visible only for Antoine -->
-          <button class="btn btn-success" type="submit" name="new-post">New Post</button>
-        </form>
 
-      </div>
 
 
     </div>
