@@ -18,6 +18,13 @@ handlers:
 - url: /www/icons
   static_dir: www/icons
 
+- url: /favicon\.ico
+  static_files: favicon.ico
+  upload: favicon\.ico
+- url: /favicon\.png
+  static_files: favicon.png
+  upload: favicon\.png
+
 # - url: /update_schema
 #   script: main.app
 #   login: admin

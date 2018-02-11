@@ -50,14 +50,24 @@
                     </label> -->
                     <div class="form-group">
                        <!-- <label for="exampleInputFile">File input</label> -->
-                       <label class="pt-2">Large image (1st)</label>
-                       <input type="file" class="form-control-file" id="exampleImgFile1" aria-describedby="fileHelp" name="img_lg">
-                       <label class="pt-2">Medium image (2nd)</label>
-                       <input type="file" class="form-control-file" id="exampleImgFile2" aria-describedby="fileHelp" name="img_md">
-                       <label class="pt-2">Small image (3rd)</label>
-                       <input type="file" class="form-control-file" id="exampleImgFile3" aria-describedby="fileHelp" name="img_sm">
+
+                       <label class="pt-2">First & main image</label>
+                       <input type="file" class="form-control-file" id="exampleImgFile1" aria-describedby="fileHelp" name="img_1st">
+
+                       <input type="text" class="form-control my-1"  name="img_1st_w" value="{{width}}" placeholder="Width (~ max: 1200)">
+                       <input type="text" class="form-control my-1" name="img_1st_h" value="{{height}}" placeholder="Height (~ max: 800)">
+
+                       <label class="pt-2">2nd image</label>
+                       <input type="file" class="form-control-file" id="exampleImgFile2" aria-describedby="fileHelp" name="img_2nd">
+                       <input type="text" class="form-control my-1"  name="img_2nd_w" value="{{width}}" placeholder="Width (pixels)">
+                       <input type="text" class="form-control my-1" name="img_2nd_h" value="{{height}}" placeholder="Height (pixels)">
+
+                       <label class="pt-2">3rd image</label>
+                       <input type="file" class="form-control-file" id="exampleImgFile3" aria-describedby="fileHelp" name="img_3rd">
+                       <input type="text" class="form-control my-1"  name="img_3rd_w" value="{{width}}" placeholder="Width (pixels)">
+                       <input type="text" class="form-control my-1" name="img_3rd_h" value="{{height}}" placeholder="Height (pixels)">
                        <br>
-                       <small id="fileHelp" class="form-text text-muted">Currently only 3 images (max) are supported. They will formatted as large, medium and small and shown in the order stated here.</small>
+                       <small id="fileHelp" class="form-text text-muted">Currently only 3 images (max) are supported. They will be included in the article in the listed order. Please enter the width and height to display (in pixels). You can find the original dimensions (also in pixels) in the jpg file properties.</small>
                      </div>
 
                   </div>

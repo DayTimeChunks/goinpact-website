@@ -1,21 +1,19 @@
 
-<!-- This html block is inserted into both:
+<!-- psot.html
+    This html block is inserted into both:
    - each ArticleView directly after posting and
    - each "for-loop" iteration in Blog.html -->
 <div class="card text-dark p-3" >
   <div class="card-block font-weight-light">
     <h4 class="card-title">{{p.subject}}</h4>
     <p class="card-subtitle mb-2 text-muted">{{p.created.strftime("%b %d, %Y")}} | {{p.author}}</p>
-
-
   </div>
-
   {% if p.has_image %}
   <div class="container">
     <div class="row">
       <div class="col-lg-6 pl-0">
         <!-- Main Image -->
-        <img class="img-thumbnail" src="/thumbnailer/{{p.key.id()}}" alt="Post picture" width="400" height="265">
+        <img class="img-thumbnail align-middle" src="/thumbnailer/{{p.key.id()}}" alt="Post picture" width="400" height="265">
       </div>
       <div class="col-lg-6 py-2 pl-0">
         <!-- Main Content -->
@@ -23,8 +21,8 @@
           <p class="card-text">{{p._render_text | safe}}</p>
         </div>
         <br>
-        <div class="text-right" >
-            <a href="/blog/{{p.key}}" class="card-link">Read more</a>
+        <div class="text-right">
+            <a href="/blog/{{p.key.integer_id()}}" class="card-link">Read more</a>
         </div>
       </div>
     </div>
@@ -39,7 +37,7 @@
         </div>
         <br>
         <div class="text-right" >
-            <a href="/blog/{{p.key}}" class="card-link">Read more</a>
+            <a href="/blog/{{p.key.integer_id()}}" class="card-link">Read more</a>
         </div>
 
       </div>

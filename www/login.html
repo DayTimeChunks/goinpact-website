@@ -20,7 +20,7 @@
           <form method="post">
             <div class="row">
               <div class="col">
-                <input type="text" class="form-control" placeholder="Email*" name="email">
+                <input type="text" class="form-control" placeholder="Email*" name="email" value={{email}}>
               </div>
 
             </div>
@@ -34,13 +34,14 @@
                 </div> -->
 
               </div>
-              <br>
-              <div class="row">
-                <div class="col text-danger">
-                  {{error_username}}
-                </div>
-              </div>
 
+
+            </div>
+            <br>
+            <div class="row">
+              <div class="col text-danger">
+                {{error_username}}
+              </div>
             </div>
             <br>
             <div class="row">

@@ -35,7 +35,10 @@ def make_pw_hash(email, pw, salt = None): # Course function
 #     return h == hash_pw(name + pw, salt)
 
 def valid_pw(email, pw, h): # Course function
-    salt = h.split("|")[0]
+    if (h == None): # Can happen if user was a google user (no password was used on 1st login)
+        salt = None
+    else:
+        salt = h.split("|")[0]
     return h == make_pw_hash(email, pw, salt)
 
 class User(ndb.Model):
@@ -84,11 +87,10 @@ class User(ndb.Model):
         return u
 
     @classmethod
-    def register(cls, username, given_name, last_name, pw, email):
+    def register(cls, username, last_name, pw, email):
         pw_hash = make_pw_hash(email, pw)
         return User(parent = users_key(),
                     username = username,
-                    given_name = given_name, # for google-signin
                     last_name = last_name,
                     pw_hash = pw_hash,
                     email = email)
@@ -111,10 +113,17 @@ class Articles(ndb.Model):
     author = ndb.StringProperty(required = False)
     subject = ndb.StringProperty(required = True)
     content = ndb.TextProperty(required = True)
-    image_lg = ndb.BlobProperty() # For storing images
-    image_md = ndb.BlobProperty() # For storing images
-    image_sm = ndb.BlobProperty() # For storing images
-    has_image = ndb.BooleanProperty()
+    image_1st = ndb.BlobProperty() # For storing images
+    image_1st_w = ndb.StringProperty() # Allows
+    image_1st_h = ndb.StringProperty()
+    image_2nd = ndb.BlobProperty() # For storing images
+    image_2nd_w = ndb.StringProperty()
+    image_2nd_h = ndb.StringProperty()
+    image_3rd = ndb.BlobProperty() # For storing images
+    image_3rd_w = ndb.StringProperty()
+    image_3rd_h = ndb.StringProperty()
+    has_image = ndb.BooleanProperty() # Controls post.html layout
+    images_num = ndb.IntegerProperty() # Controls the onepost.html layout
     created = ndb.DateTimeProperty(auto_now_add = True)
     last_modified = ndb.DateTimeProperty(auto_now = True)
     # Careful when naming properties, if
@@ -132,6 +141,10 @@ class Articles(ndb.Model):
         self._render_text = self.content.replace('\n', '<br>')
         # Use global method render_str()
         return render_str("post.html", p = self) # self is 'art' (ie. one article)
+    def render_one(self):
+        self._render_text = self.content.replace('\n', '<br>')
+        # Use global method render_str()
+        return render_str("onepost.html", p = self) # self is 'art' (ie. one article)
 
 
 

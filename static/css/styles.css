@@ -72,6 +72,10 @@ footer, .wrapper:after {
   background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 50%);
 }
 
+.hide-me{
+  display: none;
+}
+
 /*
 .short  .img-responsive {
     display: block;

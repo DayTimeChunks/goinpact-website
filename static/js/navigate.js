@@ -2,6 +2,7 @@
 
 $(function() {
 
+  // Smooth automatic scrolling (index.html)
   // Source:
   // https://css-tricks.com/smooth-scrolling-accessibility/
   $('a[href*="#"]:not([href="#"])').click(function() {
@@ -12,7 +13,6 @@ $(function() {
         $('html, body').animate({
           scrollTop: target.offset().top
         }, 2000);
-
         target.focus(); // Setting focus
         if (target.is(":focus")){ // Checking if the target was focused
           return false;
@@ -20,13 +20,12 @@ $(function() {
           target.attr('tabindex','-1'); // Adding tabindex for elements not focusable
           target.focus(); // Setting focus
         };
-
         return false;
       }
     }
   });
 
-  // Cookies to determine USer sign in
+  // Cookies to determine USER sign in
   var getCookies = function(){
     var pairs = document.cookie.split(";");
     var cookies = {};
@@ -37,134 +36,155 @@ $(function() {
     return cookies;
   }
   var cookies = getCookies();
-  console.log("cookie: " , cookies);
-
-  console.log("cookies.user_id: " , cookies.user_id);
+  // console.log("cookie: " , cookies);
+  // console.log("cookies.user_id: " , cookies.user_id);
   if (cookies.user_id){
-    console.log("true");
+    // console.log("true");
     $('#myinpact-ref').attr("href", "/logout")
     $('#myinpact').text("Log Out")
-    // $('#signup-dd').addClass(" d-none ")
-    // $('#login-dd').addClass(" d-none ")
-    // $('#logout-dd').removeClass(" d-none ")
   } else {
     $('#myinpact-ref').attr("href", "/login")
     $('#myinpact').text("My inPact")
-
-    // $('#signup-dd').removeClass(" d-none ")
-    // $('#login-dd').removeClass(" d-none ")
-    // $('#logout-dd').addClass(" d-none ")
   }
+
+  // $('#new-post').hide()
+  if (cookies.admin_id){
+    $('#new-post').removeClass('hide-me');
+    $('#new-post').show()
+  } else {
+    $('#new-post').hide()
+  }
+
+  /****
+  Dynamic text arrangement in onepost.html
+  ****/
+  var firstImg = $('#img-1');
+  firstImg.remove();
+  var secondImg = $('#img-2');
+  secondImg.remove();
+  var thirdImg = $('#img-3');
+  thirdImg.remove();
+  var textObj = $('#main-text');
+  textObj.remove();
+
+  // Convert text and images into arrays
+  // to organize the distribution on page
+  function isNotEmpty(obj){
+    for (var key in obj){
+      if (obj.hasOwnProperty(key)){
+        return true;
+      }
+    }
+  }
+
+  var array = textObj.text().split("\n");
+  // if (isNotEmpty(array)){
+  //   console.log("Array is not empty object: " + array.length);
+  // } else {
+  //   console.log("false");
+  // }
+
+
+  var array_img = [];
+  if (isNotEmpty(secondImg)){
+    array_img.push(secondImg);
+  }
+  if (isNotEmpty(thirdImg)){
+    array_img.push(thirdImg);
+  }
+
+  // console.log(typeof secondImg === 'object');
+
+  // Insert first sentence and first image
+  var headline = document.createElement("p");
+  var node = document.createTextNode(array[0]);
+  // console.log("first node: " + array);
+  if (headline !== null && node !== null){
+    headline.append(node);
+    array.splice(0, 1); // .splice(index, how_many)
+    var parent = document.getElementById("main-article");
+    if (parent !== null){
+      parent.append(headline);
+      parent.append(firstImg.get(0));
+    }
+  }
+
+  // Remove all empty spaces and line breaks in a new array
+  var paragraphs = new Array();
+  for (var i = 0; i < array.length; i++){
+    if (array[i].length > 0){
+      paragraphs.push(array[i]);
+    }
+  }
+
+
+  // console.log("New array +++++++++" + paragraphs.length);
+  // for (var index = 0; index < paragraphs.length; index++){
+  //   // console.log("index " + array[i]);
+  //   if (paragraphs[index].length > 0){
+  //     console.log("p[index] " + paragraphs[index]);
+  //     console.log(index);
+  //   } else {
+  //     console.log("space");
+  //   }
+  // }
+  /**/
+
+  //  Define the number of sections (min = 2)
+  // 1 section = 1 text block (of 5 sentences) followed by an image block.
+  var sections = 2; // minimum
+  var counter = 1;
+  for (var p = 0; p < paragraphs.length; p++){
+    if (counter === 5){
+      sections += 1;
+      counter = 0;
+    }
+  }
+  // console.log("Sections: " + sections);
+  var p_counter = 1;
+  // console.log("ini_paragraphs.length: " + ini_paragraphs.length);
+  var tot_paragraphs = paragraphs.length;
+  while (paragraphs.length > 0){
+    p_counter += 1;
+    var new_p = document.createElement("p");
+    node = document.createTextNode(paragraphs[0]);
+    // console.log("node:" + array[0]==="");
+    // console.log("node:" + array[0].length);
+    new_p.append(node);
+    parent.append(new_p);
+    paragraphs.splice(0, 1); // delte first paragraph
+    if (p_counter === sections){
+      // Append 2nd or 3rd image to DOM
+      if (array_img.length > 1){
+        parent.append(array_img[0].get(0));
+        array_img.splice(0,1);
+        p_counter = 0;
+      } else {
+        p_counter = 0;
+        continue;
+      }
+    }
+  }
+  //  Finally include remaining images
+  while (array_img.length > 0){
+    parent.append(array_img[0].get(0));
+    array_img.splice(0,1);
+  }
+
+
+
 
   // $(document).ready(function(){
   //     $('[data-toggle="tooltip"]').tooltip();
   // });
 
-  // Canvas
-  var canvas = document.getElementById("canvas");
-  // if (canvas.getContext) {
-  var ctx = canvas.getContext("2d");
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  ctx.lineWidth = 10;
-  var lineCap = ['butt', 'round', 'square'];
-  ctx.lineCap = lineCap[1];
-
-  function drawLine(xi, yi, cp1x, cp1y, xf, yf) {
-    // var canvas = document.getElementById('canvas');
-    // if (canvas.getContext) {}
-      // var ctx = canvas.getContext('2d');
-      // ctx.fillStyle = 'rgb(200, 0, 0)';
-      // ctx.fillRect(10, 10, 50, 50); // fillRect(x, y, width, height)
-      //
-      // ctx.fillStyle = 'rgba(0, 0, 200, 0.5)';
-      // ctx.fillRect(30, 30, 50, 50);
-
-      // Draw guides
-      ctx.strokeStyle = 'black';
-      ctx.beginPath();
-      ctx.moveTo(xi, yi);
-      ctx.setLineDash([5, 20]); // {lenght:empty space} of line sequence
-      ctx.quadraticCurveTo(cp1x, cp1y, xf, yf)
-
-      // ctx.lineTo(140, 10);
-      // ctx.moveTo(10, 140);
-      // ctx.lineTo(140, 140);
-      ctx.stroke();
-
-
-  }
-
-
-
-// Draws an icon on the x,y coordinates of
-// the canvas context (ctx) declared above
-  var MAX_HEIGHT = 100;
-  function render(src, x, y){
-  	var image = new Image();
-  	image.onload = function(){
-  		console.log("image.height: " + image.height);
-  		if(image.height > MAX_HEIGHT) {
-  			image.width *= MAX_HEIGHT / image.height;
-  			image.height = MAX_HEIGHT;
-  		}
-  		// canvas.width = image.width;
-  		// canvas.height = image.height;
-  		ctx.drawImage(image, x, y, image.width, image.height);
-  	};
-  	image.src = src;
-  }
-  // ctx.font = "25px Arial";
-  // ctx.fillText("Select a project", canvas.width / 2 - 70, 120);
-  render("www/icons/048-package.svg", canvas.width / 2 - 50, 0);
-
-  render("www/icons/022-money.svg", canvas.width - 100, canvas.height/2 - 30);
-  render("www/icons/017-presentation.svg", canvas.width / 2 - 50, canvas.height - 100);
-  render("www/icons/027-megaphone.svg", 0, canvas.height/2 - 50);
-
-  // let xi = canvas.width / 2;
-  // let yi = 10;
-  // let cp1x = 450;
-  // let cp1y = 10;
-  // let xf = canvas.width - 50;
-  // let yf = canvas.height/2 - 50;
-
-  // First line
-  drawLine(
-    canvas.width / 2 + 70, 70, // xi, yi
-    560, 50, // control points
-    canvas.width - 50, canvas.height/2 - 37 // end points
-  );
-
-  // Second line
-  drawLine(
-    canvas.width - 50, canvas.height/2 + 75, // xi, yi
-    canvas.width - 40, canvas.height - 40, // control points
-    canvas.width/2 + 50, canvas.height - 50 // end points
-  );
-
-  drawLine(
-    canvas.width/2 - 60, canvas.height - 50, // xi, yi
-    0 + 40 , canvas.height - 40, // control points
-    40, canvas.height/2 + 50 // end points
-  );
-
-  drawLine(
-    35, canvas.height/2 - 50,
-    30, 50,
-    canvas.width / 2 - 70,  70,
-  )
-
-
   // Sign-up | Sign-in page
-
   // Initialisieren, ohne Objekt möglich
   // TabPages.init('myTabPage');
   //
   // // Um eine Page vor zu selektieren, braucht man das Objekt aber
   // var tab = TabPages.init('myTabPage');
   // tab.selectTab('page3');
-
 
   // geht auch klassich
   // var myTabElement = new TabPages('myTabPage');

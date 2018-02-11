@@ -1,0 +1,87 @@
+
+<!-- This html block is inserted into both:
+   - each ArticleView directly after posting and
+   - each "for-loop" iteration in Blog.html -->
+<div class="card text-dark p-3" >
+  <div class="card-block font-weight-light">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <h4 class="card-title">{{p.subject}}</h4>
+          <p class="card-subtitle mb-2 text-muted">{{p.created.strftime("%b %d, %Y")}} | {{p.author}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% if p.has_image %}
+    {% if p.images_num == 1 %}
+    <div class="container">
+      <div class="row">
+        <div id="main-article" class="col-md-12">
+          <!-- Main Image Top of article -->
+          <img id="img-1" class="img-thumbnail img-fluid mb-3 mx-auto d-block" src="/thumbnailer/{{p.key.id()}}" alt="Post picture">
+          <p id="main-text" class="card-text">{{p._render_text | safe}}</p>
+        </div>
+      </div>
+    </div>
+      {% elif p.images_num == 2 %}
+      <div class="container">
+        <div class="row">
+          <div id="main-article" class="col-lg-12">
+            <!-- Main Image Top of article -->
+            <img id="img-1" class="img-thumbnail img-fluid mb-3 mx-auto d-block" src="/thumbnailer/{{p.key.id()}}" alt="Post picture">
+
+            <p id="main-text" class="card-text">{{p._render_text | safe}}</p>
+
+            <img id="img-2" class="img-thumbnail img-fluid ml-3 mb-3 mx-auto d-block" src="/secondpic/{{p.key.id()}}" alt="Post picture">
+
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div class="container">
+        <div class="row">
+          <div id="main-article" class="col-lg-12">
+            <!-- Main Image Top of article -->
+            <div class="">
+              <img id="img-1" class="img-thumbnail img-fluid mb-3 mx-auto d-block" src="/thumbnailer/{{p.key.id()}}" alt="Post picture">
+            </div>
+
+            <p id="main-text" class="card-text">{{p._render_text | safe}}</p>
+            <img id="img-2" class="img-thumbnail img-fluid ml-3 mb-3 mx-auto d-block" src="/secondpic/{{p.key.id()}}" alt="Post picture">
+
+            <img id="img-3" class="img-thumbnail img-fluid align-bottom mr-3 mb-3 mx-auto d-block" src="/thirdpic/{{p.key.id()}}" alt="Post picture">
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  {% else %}
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Main Content -->
+      <div class="col-lg-12 px-0 text-truncate">
+        <div class="module fadeout">
+          <p class="card-text">{{p._render_text | safe}}</p>
+        </div>
+        <br>
+        <div class="text-right" >
+            <a href="/blog/{{p.key}}" class="card-link">Read more</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  <!-- p.key() can be used to access the key of the article -->
+  <hr>
+
+  <!-- Map -->
+  <!-- {% if p.map_url %}
+  <div class="card-block">
+    <h6 class="card-subtitle mb-2 text-muted">Town, Country</h6>
+    <p class="card-text">Location description....</p>
+    <img class="card-img-bottom img-fluid img-thumbnail" src="{{p.map_url}}" alt="Card image map">
+  </div>
+  {% endif %} -->
+</div>
+<br>

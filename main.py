@@ -189,10 +189,16 @@ class Blog(Handler):
 
     def cookie_login(self, user):
         # self.set_secure_cookie('user_id', str(user.key().id())) # old db
-        self.set_secure_cookie('user_id', str(user.key.integer_id())) # old db
+        self.set_secure_cookie('user_id', str(user.key.integer_id()))
+
+    def cookie_admin(self, user):
+        self.set_secure_cookie('admin_id', str(user.key.integer_id()))
 
     def cookie_logout(self):
         self.response.headers.add_header('Set-Cookie', 'user_id=; Path=/')
+
+    def cookie_admin_out(self):
+        self.response.headers.add_header('Set-Cookie', 'admin_id=; Path=/')
 
     def initialize(self, *a, **kw):
         # app engine has a function that gets called every request
@@ -203,9 +209,9 @@ class Blog(Handler):
         # Keep track of every user
         self.user = uid and User.by_id(int(uid))
         print("Initialize self.user:", self.user)
-        if self.user:
-            u = User.by_id(int(uid))
-            print("Initialize self.useremail:", u.email)
+        # if self.user:
+        #     u = User.by_id(int(uid))
+            # print("Initialize self.useremail:", u.email)
 
 
 class BlogFront(Blog):
@@ -249,8 +255,6 @@ class BlogFrontJson(Blog):
 
         json_arts = json.dumps(json_arts)
         self.write(json_arts)
-
-        # self.write()
 
 # Use this for the course.
 # Later, allow user to provide the coordinates
@@ -315,13 +319,13 @@ class NewPost(Blog):
     # redirected from New Post click button on BlogFront
     def get(self):
         if self.user:
-            # print("self.user:", self.user.name)
-            self.render_post()
+            user = users.get_current_user()
+            if user and users.is_current_user_admin():
+                self.render_post()
         else:
             self.redirect('/login')
 
     def render_post(self, subject="", content="", error=""):
-
         # Debug to see if coordinates work:
         # This will write my machine's ip
         # self.write(self.request.remote_addr)
@@ -334,9 +338,16 @@ class NewPost(Blog):
         # Get new post data
         subject = self.request.get("subject")
         content = self.request.get("content")
-        image_lg = self.request.get("img_lg")
-        image_md = self.request.get("img_md")
-        image_sm = self.request.get("img_sm")
+        image_1st = self.request.get("img_1st")
+        image_1st_w = self.request.get("img_1st_w")
+        image_1st_h = self.request.get("img_1st_h")
+
+        image_2nd = self.request.get("img_2nd")
+        image_2nd_w = self.request.get("img_2nd_w")
+        image_2nd_h = self.request.get("img_2nd_h")
+        image_3rd = self.request.get("img_3rd")
+        image_3rd_w = self.request.get("img_3rd_w")
+        image_3rd_h = self.request.get("img_3rd_h")
         lat = str(self.request.get("latitude")).strip()
         lon = str(self.request.get("longitude")).strip()
 
@@ -346,7 +357,6 @@ class NewPost(Blog):
         # lat = 50.954873
         # lon = 6.938495
 
-
         if subject and content:
             a = Articles(subject=subject, content=content)
             a.author = self.user.username
@@ -355,22 +365,32 @@ class NewPost(Blog):
             # a = Articles(parent= blog_key(), subject=subject, content=content)
 
             if lat and lon:
-                print("lat, lon:", lat, lon)
-
+                # print("lat, lon:", lat, lon)
                 # a.coords = db.GeoPt(lat, lon)
                 a.map_url = gmaps_img([lat, lon])
 
             # Check and store uploaded images
-            if image_lg:
+            images_num = 0
+            if image_1st:
                 a.has_image = True
-                a.image_lg = image_lg
-            if image_md:
+                a.image_1st = image_1st
+                a.image_1st_w = image_1st_w
+                a.image_1st_h = image_1st_h
+                images_num += 1
+            if image_2nd:
                 a.has_image = True
-                a.image_md = image_md
-            if image_sm:
+                a.image_2nd = image_2nd
+                a.image_2nd_w = image_2nd_w
+                a.image_2nd_h = image_2nd_h
+                images_num += 1
+            if image_3rd:
                 a.has_image = True
-                a.image_sm = image_sm
+                a.image_3rd = image_3rd
+                a.image_3rd_w = image_3rd_w
+                a.image_3rd_h = image_3rd_h
+                images_num += 1
 
+            a.images_num = images_num
             a.put() # Saves the art object to the database
             # article_id = a.key().id() # old db
             article_id = a.key.integer_id() # new ndb
@@ -378,13 +398,7 @@ class NewPost(Blog):
             # self.redirect("/blog/" + str(article_id), article_id)
             # Another way (solution):
             # Get will extract whatever is after '/blog/'
-            # self.redirect("/blog/%s" % str(article_id))
-            # TODO: Temporary redirect to a new location without jinja
-            # 1. direct to permalink post
-            # 2. on permalin khtml, include the link href= handler + ID
-            # 3. on Thumnailer, leave as is...
-            self.render('permalinktest.html', article_id = article_id)
-            # self.redirect("/thumbnailer/%s" % str(article_id))
+            self.redirect("/blog/%s" % str(article_id))
         else:
             error = "Please include both subject and content."
             self.render_post(subject=subject, content=content, error=error)
@@ -421,30 +435,64 @@ class ArticleView(Blog):
             json_art = json.dumps(json_art)
             self.write(json_art)
 
-# TODO:
-# Enable multiple images....
-# This class renders the image once in the html
+# This class renders the image in the html <img> element
+# It works for BlogFront and articles with 1 picture only
 class Thumbnailer(Blog):
     def get(self, article_id):
         article = Articles.get_by_id(int(article_id))
         thumbnail = None
         if article:
-            img_lg = images.Image(article.image_lg)
-            if img_lg:
-                img_lg.resize(width=400, height=265)
-                thumbnail = img_lg.execute_transforms(output_encoding=images.JPEG)
+            img_1st = images.Image(article.image_1st)
+            w = int(article.image_1st_w)
+            h = int(article.image_1st_h)
+            if img_1st and int(w) and int(h):
+                img_1st.resize(width=w, height=h)
+                thumbnail = img_1st.execute_transforms(output_encoding=images.JPEG)
                 self.response.headers['Content-Type'] = 'image/jpeg'
                 self.response.out.write(thumbnail)
             else:
                 return
         else:
             return
-        # self.render("permalinktest.html", thumbnail = thumbnail)
 
+# Not the most efficient solution, as
+# for the article with three images, the database will be
+# queried 6 times for the same entity (3 on render + 3 on JS manipulation).
+class SecondPic(Blog):
+    def get(self, article_id):
+        article = Articles.get_by_id(int(article_id))
+        thumbnail = None
+        if article:
+            img_2nd = images.Image(article.image_2nd)
+            w = int(article.image_2nd_w)
+            h = int(article.image_2nd_h)
+            if img_2nd and int(w) and int(h):
+                img_2nd.resize(width=w, height=h)
+                thumbnail = img_2nd.execute_transforms(output_encoding=images.JPEG)
+                self.response.headers['Content-Type'] = 'image/jpeg'
+                self.response.out.write(thumbnail)
+            else:
+                return
+        else:
+            return
 
-# class ImgServe(webapp2.Requesthandler):
-#     def get(self, resource):
-#         pass
+class ThirdPic(Blog):
+    def get(self, article_id):
+        article = Articles.get_by_id(int(article_id))
+        thumbnail = None
+        if article:
+            img_3rd = images.Image(article.image_3rd)
+            w = int(article.image_3rd_w)
+            h = int(article.image_3rd_h)
+            if img_3rd and int(w) and int(h):
+                img_3rd.resize(width=w, height=h)
+                thumbnail = img_3rd.execute_transforms(output_encoding=images.JPEG)
+                self.response.headers['Content-Type'] = 'image/jpeg'
+                self.response.out.write(thumbnail)
+            else:
+                return
+        else:
+            return
 
 
 
@@ -497,7 +545,6 @@ class SignUp(Blog):
     def post(self):
         have_error = False
         self.username = self.request.get("username")
-        self.given_name = self.request.get("given_name")
         self.last_name = self.request.get("last_name")
         self.email = self.request.get("email")
         self.password = self.request.get("password")
@@ -536,7 +583,7 @@ class Register(SignUp):
             # params['error_user_exists'] = msg
             self.render("signup.html", error_username = msg)
         else:
-            u = User.register(self.username, self.given_name, self.last_name, self.password, self.email)
+            u = User.register(self.username, self.last_name, self.password, self.email)
             u.put()
             self.cookie_login(u) # Used for new users and old users
             self.redirect("/welcome")
@@ -544,8 +591,13 @@ class Register(SignUp):
 class Login(Blog):
     def get(self):
         # If user chooses Google Sign-in
+        # if not, the "post()" method below will be followed.
+        isAdmin = False
         user = users.get_current_user() # Returns email address
         if user:
+            if (users.is_current_user_admin()):
+                isAdmin = True
+
             nickname = user.nickname()
             guser_id = user.user_id() # This is unique, email address may change.
             email = user.email()
@@ -559,16 +611,20 @@ class Login(Blog):
 
             # Old inPact user, now using Google Signin for the first time
             if old_user and not u:
-                old_user.user_id = user_id
+                old_user.user_id = guser_id
                 old_user.nickname = nickname
                 old_user.email = email
                 old_user.put()
-                self.cookie_login(u)
+                self.cookie_login(old_user)
+                if (isAdmin):
+                    self.cookie_admin(old_user)
             # Both google details and old user exists
             elif u and old_user:
                 msg = 'User already exists'
                 logging.warning(msg)
                 self.cookie_login(u)
+                if (isAdmin):
+                    self.cookie_admin(u)
             else:
                 u = User(parent = users_key(),
                          guser_id = guser_id,
@@ -577,8 +633,11 @@ class Login(Blog):
                          nickname = nickname)
                 u.put()
                 self.cookie_login(u) # Used for new users and old users
+                if (isAdmin):
+                    self.cookie_admin(u)
 
             logging.warning('user True, get_current_user(): %s' % user)
+
             self.redirect("/welcome")
 
         else:
@@ -597,8 +656,8 @@ class Login(Blog):
             self.cookie_login(u)
             self.redirect("/welcome")
         else:
-            msg = "Invalid email and password"
-            self.render("login.html", error_username = msg)
+            msg = "Invalid email and/or password"
+            self.render("login.html", error_username = msg, email=email)
 
 class Logout(Blog):
     # reset user_id cookie to nothing
@@ -607,9 +666,11 @@ class Logout(Blog):
         user = users.get_current_user()
         if user: # Google user?
             self.cookie_logout()
+            self.cookie_admin_out()
             self.redirect(users.create_logout_url("/"))
             # self.write(repr(users.get_current_user() ) )
         else:
+            self.cookie_admin_out()
             self.cookie_logout()
             self.redirect("/")
 
@@ -706,6 +767,8 @@ app = webapp2.WSGIApplication([('/', MainPage),
                                ('/blog/.json', BlogFrontJson),
                                ('/blog/(\d+)|[json]', ArticleView),
                                ('/thumbnailer/(\d+)', Thumbnailer),
+                               ('/secondpic/(\d+)', SecondPic), # Need to optimize how these are generated.
+                               ('/thirdpic/(\d+)', ThirdPic),
                                ('/blog/newpost', NewPost),
                                ('/signup', Register),
                                ('/login', Login),

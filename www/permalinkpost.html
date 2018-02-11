@@ -27,13 +27,23 @@
     <section class="py-5 text-light">
       <div class="container-fluid">
         <div class="container">
-          {% block content %}
-            {{article.render() | safe}}
-          {% endblock %}
-          <!-- "safe" parameter suspends escaping for this chunk
-                This is only safe for beta versions -->
-          <a href="/blog">
-            <button class="btn btn-dark" name="back-to-blog">Back to Blog</button>
+          <div class="row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8">
+              <!-- permalinkpost.html -->
+              {% block content %}
+                {{article.render_one() | safe}}
+              {% endblock %}
+              <!-- "safe" parameter suspends escaping for this chunk
+                    This is only safe for beta versions -->
+              <a href="/blog">
+                <button class="btn btn-dark" name="back-to-blog">Back to Blog</button>
+            </div>
+
+
+          </div>
+
+
           </a>
         </div>
       </div>
