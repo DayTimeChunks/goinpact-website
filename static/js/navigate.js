@@ -50,9 +50,12 @@ $(function() {
   // $('#new-post').hide()
   if (cookies.admin_id){
     $('#new-post').removeClass('hide-me');
+    $('#edit-post').removeClass('hide-me');
     $('#new-post').show()
+    $('#edit-post').show()
   } else {
     $('#new-post').hide()
+    $('#edit-post').hide()
   }
 
   /****

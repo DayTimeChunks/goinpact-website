@@ -24,7 +24,60 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
   </head>
   <body>
-    <section class="py-5 text-light">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="/">inPact</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+              <a class="nav-link mx-1" href="/">Home
+                <span class="sr-only">(current)</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link mx-1" href="/#glance">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link mx-1" href="/#community">Community</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link mx-1" href="/support">Support</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link mx-1" href="/#contact">Contact</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link mx-1" href="/blog">Blog</a>
+            </li>
+            <!-- <li>
+              <div class="dropdown">
+                <button class="btn btn-primary px-2 py-0 mx-1 my-2 dropdown-toggle" type="button" id="dropdownMyInPact" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">My inPact
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMyInPact">
+                  <a id="signup-dd" class="dropdown-item" href="/user">Sign Up</a>
+                  <a id="login-dd" class="dropdown-item" href="/user">Log In</a>
+                  <a id="logout-dd" class="dropdown-item" href="/logout">Log Out</a>
+                </div>
+              </div>
+            </li> -->
+            <!-- Implement via React -->
+            <li>
+              <a id="myinpact-ref" href="">
+                <button id="myinpact" class="btn btn-primary px-2 py-0 mx-1 my-2" type="button" name="signup">My inPact</button>
+              </a>
+            </li>
+
+
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <section class="mt-5 py-5 text-light">
       <div class="container-fluid">
         <div class="container">
           <div class="row">
@@ -36,15 +89,35 @@
               {% endblock %}
               <!-- "safe" parameter suspends escaping for this chunk
                     This is only safe for beta versions -->
-              <a href="/blog">
-                <button class="btn btn-dark" name="back-to-blog">Back to Blog</button>
+            <div class="row">
+              <div class="col-sm-6">
+                <a href="/blog">
+                  <button class="btn btn-dark float-left" name="back-to-blog">Back to Blog</button></a>
+              </div>
+
+              <div class="col-sm-6">
+                <div class="d-flex justify-content-end">
+                  <!-- <form method="post">
+                    <button id="edit-post" class="btn btn-success py-1 hide-me" type="submit" name="edit-post" value={{article.key}}>Edit Post</button>
+                  </form> -->
+                  <a id="edit-post" class="btn btn-success py-1 hide-me" href="/editpost/{{article.key.integer_id()}}">Edit Post</a>
+                </div>
+
+              </div>
+            </div>
+
+
+
+
+
+
             </div>
 
 
           </div>
 
 
-          </a>
+
         </div>
       </div>
     </section>

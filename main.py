@@ -372,24 +372,22 @@ class NewPost(Blog):
             # Check and store uploaded images
             images_num = 0
             if image_1st:
-                a.has_image = True
                 a.image_1st = image_1st
-                a.image_1st_w = image_1st_w
-                a.image_1st_h = image_1st_h
+                a.image_1st_w = image_1st_w if str(image_1st_w) else str(1200)
+                a.image_1st_h = image_1st_h if str(image_1st_h) else str(750)
                 images_num += 1
             if image_2nd:
-                a.has_image = True
                 a.image_2nd = image_2nd
-                a.image_2nd_w = image_2nd_w
-                a.image_2nd_h = image_2nd_h
+                a.image_2nd_w = image_2nd_w if str(image_2nd_w) else str(200)
+                a.image_2nd_h = image_2nd_h if str(image_2nd_h) else str(200)
                 images_num += 1
             if image_3rd:
-                a.has_image = True
                 a.image_3rd = image_3rd
-                a.image_3rd_w = image_3rd_w
-                a.image_3rd_h = image_3rd_h
+                a.image_3rd_w = image_3rd_w if str(image_3rd_w) else str(500)
+                a.image_3rd_h = image_3rd_h if str(image_3rd_h) else str(300)
                 images_num += 1
 
+            a.has_image = True if images_num > 0 else False
             a.images_num = images_num
             a.put() # Saves the art object to the database
             # article_id = a.key().id() # old db
@@ -407,6 +405,8 @@ class ArticleView(Blog):
     # PostPage where Permalink.hmtml is run
     # article_id is passed from the webapp2 regex expression
     def get(self, article_id):
+
+        logging.warning("URL: %s" % str(self.request.url))
         # Parse article_id, checking if ends in .json
         # If json, return a json object, othersie find the article
         parsed = article_id.split(".")
@@ -435,6 +435,144 @@ class ArticleView(Blog):
             json_art = json.dumps(json_art)
             self.write(json_art)
 
+    def post(self):
+        article_id = self.request.get("edit-post")
+        self.redirect("/editpost/%s" % str(article_id))
+
+class EditPost(Blog):
+    def get(self, article_id):
+        article_to_edit = Articles.get_by_id(int(article_id))
+        if article_to_edit:
+            self.render("editpost.html", article=article_to_edit)
+        else:
+            self.error(404)
+            # Include your own 404 html response
+            return
+
+    def render_post(self, subject="", content="", error=""):
+        # Debug to see if coordinates work:
+        # This will write my machine's ip
+        # self.write(self.request.remote_addr)
+        # Debug the whole thing
+        # "repr" is a way to avoid' pythons "<...>" response, which would otherwise be read as a html "tag" and thus be able to post the response to the page
+        # self.write(repr(get_coords(self.request.remote_addr)))
+        self.render("editpost.html", subject=subject, content=content, error=error)
+
+    def post(self, article_id):
+        article = Articles.get_by_id(int(article_id))
+        # logging.warning("URL: %s" % str(self.request.url))
+        # logging.warning("article_id: %s" % str(article_id))
+        subject = self.request.get("subject")
+        content = self.request.get("content")
+
+        image_1st_delete = self.request.get("img-1st-delete")
+        image_2nd_delete = self.request.get("img-2nd-delete")
+        image_3rd_delete = self.request.get("img-3rd-delete")
+
+        image_1st = self.request.get("img_1st")
+        image_1st_w = self.request.get("img_1st_w")
+        image_1st_h = self.request.get("img_1st_h")
+
+        logging.warning("image with user selected? %s" % image_1st_w)
+
+        if not image_1st_w and image_1st:
+            image_1st_w = str(article.image_1st_w)
+        if not image_1st_h and image_1st:
+            image_1st_h = str(article.image_1st_h)
+
+        logging.warning("image with old obj selected? %s" % image_1st_w)
+
+        image_2nd = self.request.get("img_2nd")
+        image_2nd_w = self.request.get("img_2nd_w")
+        image_2nd_h = self.request.get("img_2nd_h")
+        if not image_2nd_w and image_2nd:
+            image_2nd_w = str(article.image_2nd_w)
+        if not image_2nd_h and image_2nd:
+            image_2nd_h = str(article.image_2nd_h)
+
+        image_3rd = self.request.get("img_3rd")
+        image_3rd_w = self.request.get("img_3rd_w")
+        image_3rd_h = self.request.get("img_3rd_h")
+        if not image_3rd_w and image_3rd:
+            image_3rd_w = str(article.image_3rd_w)
+        if not image_3rd_h and image_3rd:
+            image_3rd_h = str(article.image_3rd_h)
+
+        delete_1st = delete_2nd = delete_3rd = False
+        if image_1st_delete and not image_1st:
+            delete_1st = True
+        if image_2nd_delete and not image_2nd:
+            delete_2nd = True
+        if image_3rd_delete and not image_3rd:
+            delete_3rd = True
+
+        map_delete = True if self.request.get("map-delete") else False
+        lat = str(self.request.get("latitude")).strip()
+        lon = str(self.request.get("longitude")).strip()
+
+        #  Update article
+        if subject and content:
+            article.subject = subject
+            article.content = content
+
+            # Store/delete images
+            images_num = article.images_num # 0 to 3
+            has_image = article.has_image # True or False
+            if image_1st:
+                had_1st_img = True if article.image_1st else False
+                article.image_1st = None
+                article.image_1st = image_1st
+                article.image_1st_w = image_1st_w if str(image_1st_w) else str(1200)
+                article.image_1st_h = image_1st_h if str(image_1st_h) else str(750)
+                if not had_1st_img:
+                    images_num += 1
+            elif delete_1st:
+                article.image_1st = None
+                images_num -= 1
+
+            if image_2nd:
+                had_2nd_img = True if article.image_2nd else False
+                article.image_2nd = None
+                article.image_2nd = image_2nd
+                article.image_2nd_w = image_2nd_w if str(image_2nd_w) else str(200)
+                article.image_2nd_h = image_2nd_h if str(image_2nd_h) else str(200)
+                if not had_2nd_img:
+                    images_num += 1
+            elif delete_2nd:
+                article.image_2nd = None
+                images_num -= 1
+
+            if image_3rd:
+                had_3rd_image = True if article.image_3rd else False
+                article.image_3rd = None
+                article.image_3rd = image_3rd
+                article.image_3rd_w = image_3rd_w if str(image_3rd_w) else str(500)
+                article.image_3rd_h = image_3rd_h if str(image_3rd_h) else str(300)
+                if not had_3rd_image:
+                    images_num += 1
+            elif delete_3rd:
+                article.image_3rd = None
+                images_num -= 1
+
+            article.has_image = True if images_num > 0 else False
+            article.images_num = images_num
+
+            if lat and lon:
+                map_delete = False
+                # a.coords = db.GeoPt(lat, lon)
+                article.map_url = gmaps_img([lat, lon])
+
+            article.put()
+            self.redirect("/blog/%s" % str(article_id))
+        else:
+            error = "Please include both subject and content."
+            # TODO: not sure if second argument will work...???
+            # self.redirect("/editpost/%s" % str(article_id), error=error)
+            self.render_post(subject=subject, content=content, error=error)
+            # TODO, see how NewPost is written..., L:318
+
+
+
 # This class renders the image in the html <img> element
 # It works for BlogFront and articles with 1 picture only
 class Thumbnailer(Blog):
@@ -458,19 +596,25 @@ class Thumbnailer(Blog):
 # Not the most efficient solution, as
 # for the article with three images, the database will be
 # queried 6 times for the same entity (3 on render + 3 on JS manipulation).
-class SecondPic(Blog):
-    def get(self, article_id):
+class OtherPic(Blog):
+    def get(self, article_id, pic_num):
         article = Articles.get_by_id(int(article_id))
+        print("pic_num: ", pic_num)
         thumbnail = None
         if article:
-            img_2nd = images.Image(article.image_2nd)
-            w = int(article.image_2nd_w)
-            h = int(article.image_2nd_h)
-            if img_2nd and int(w) and int(h):
-                img_2nd.resize(width=w, height=h)
-                thumbnail = img_2nd.execute_transforms(output_encoding=images.JPEG)
+            if pic_num == 'image_3rd':
+                img = images.Image(article.image_3rd)
+                w = int(article.image_3rd_w)
+                h = int(article.image_3rd_h)
+            else:
+                img = images.Image(article.image_2nd)
+                w = int(article.image_2nd_w)
+                h = int(article.image_2nd_h)
+            if img and int(w) and int(h):
+                img.resize(width=w, height=h)
+                image = img.execute_transforms(output_encoding=images.JPEG)
                 self.response.headers['Content-Type'] = 'image/jpeg'
-                self.response.out.write(thumbnail)
+                self.response.out.write(image)
             else:
                 return
         else:
@@ -696,7 +840,8 @@ class Debug(Blog):
 
     def post(self):
         usr_key = self.request.get("delete-user")
-        user_to_delete = User.get(usr_key)
+        # user_to_delete = User.get(usr_key) # Old db
+        user_to_delete = usr_key.get() # New ndb
         user_to_delete.delete()
         # print("usr to delete: ", user_to_delete)
         self.redirect('/debug')
@@ -766,9 +911,9 @@ app = webapp2.WSGIApplication([('/', MainPage),
                                ('/blog/?', BlogFront), # See note below on "?"
                                ('/blog/.json', BlogFrontJson),
                                ('/blog/(\d+)|[json]', ArticleView),
+                               ('/editpost/(\d+)', EditPost),
                                ('/thumbnailer/(\d+)', Thumbnailer),
-                               ('/secondpic/(\d+)', SecondPic), # Need to optimize how these are generated.
-                               ('/thirdpic/(\d+)', ThirdPic),
+                               ('/otherpic/(\d+)/(\w+)', OtherPic), # Need to optimize how these are generated.
                                ('/blog/newpost', NewPost),
                                ('/signup', Register),
                                ('/login', Login),

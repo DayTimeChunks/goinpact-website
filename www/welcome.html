@@ -1,10 +1,15 @@
-{% extends "base.html"%}
+{% extends "base-nobut.html"%}
 
 {% block content %}
 
 <section class="py-5 my-5">
-  <h2>Welcome, {{username}}!</h2>
-  <a href="{{ g_url | safe}}">{{ g_url_txt }}</a>
+  <div class="container text-light">
+    <h2>Welcome, {{username}}!</h2>
+    <!-- <p>Antoine, at this point, this "logged-in space" is only for you. When logged in as admin (i.e. with a gmail account that you gave me) you can post new and edit old posts.</p>
+    <p>Note that picture arrangement in the article is rigid for the moment, with a maximum of 3 pics per article.</p>
+    <a href="{{ g_url | safe}}">{{ g_url_txt }}</a> -->
+  </div>
+
 </section>
 
 
