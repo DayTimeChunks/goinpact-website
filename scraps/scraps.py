@@ -33,3 +33,49 @@ class BlogFront(Blog):
         # self.response.headers.add_header('Set-Cookie', 'visits=%s' % str(new_cookie_val))
 
         self.render_blog()
+
+
+# Google sign-in effort I think.
+# Identifying yoursef by changing a header's "User-Agent"
+def get_token(self):
+    url = 'http://localhost:8080/tokensignin'
+    content = None
+    try:
+        request = urllib2.Request(url)
+        # Identify yourself! Be polite, say Hi!
+        request.add_header('User-Agent', 'TheinPactProject/1.0 +http://goinpact.org/  daytightchunks@gmail.com')
+        opener = urllib2.build_opener()
+
+        # content = urllib2.urlopen(url).read()
+        content = opener.open(request).read()
+    except urllib2.URLError, e:
+        self.write(e.fp.read())
+        return
+
+    if content:
+        self.write(repr(content.headers.items()))
+    else:
+        self.write("No token found")
+
+
+
+# Example of memecache, wasn't workind when top_arts
+# called from NewPost(), because we were quering the database, before sending the POST request to store the new data. SO we were still getting the entities, not the most recent. Fixed by moving the memcache update to ArtivelView (next handler for both NewPost and EditPost.)
+CACHE = {} # Temproary memcache example
+def top_arts(update = False):
+    key = 'top' # Will be the reference to the value we wil store here.
+    if not update and key in CACHE:
+        logging.warning("Getting CACHE")
+        logging.warning("Update value: %s" % update)
+        arts = CACHE[key]
+        logging.warning("Length of arts: %s" % len(arts))
+    else: # Query the database
+        logging.warning("Running a DB Query == Moneyyyy!")
+        # arts = Articles.all().order('-created') # Old db
+        arts = Articles.query().order(-Articles.created) # new ndb
+        arts = list(arts) # Avoids querying the db again in jinja template!
+        # CACHE.clear()
+        CACHE[key] = arts
+        logging.warning("Length of arts after re-query: %s" % len(arts))
+        logging.warning("Length of CACHE[key] after re-query: %s" % len(CACHE[key]))
+    return arts

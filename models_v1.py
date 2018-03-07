@@ -146,7 +146,10 @@ class Articles(ndb.Model):
         # Use global method render_str()
         return render_str("onepost.html", p = self) # self is 'art' (ie. one article)
 
-
+    @classmethod
+    def by_id(cls, aid):
+        # 'cls' refers to the User class
+        return cls.get_by_id(aid, parent = blog_key())
 
 
 

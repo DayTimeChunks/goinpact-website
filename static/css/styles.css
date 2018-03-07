@@ -13,24 +13,23 @@ body {
   position: relative; */
 }
 
-/* .wrapper {
+/* Bottom footer */
+html {
+  position: relative;
   min-height: 100%;
-  margin-bottom: -142px;
+}
+body {
+  margin-bottom: 90px; /* bottom = footer height */
+  /* padding: 25px; */
 }
 
-.wrapper:after {
-  content: "";
-  display: block;
-} */
-
-footer, .wrapper:after {
-  /* height: 142px; */
-  /* position: absolute;
-  right: 0;
+footer {
+  position: absolute;
   left: 0;
   bottom: 0;
-  text-align: center; */
-
+  height: 90px;
+  width: 100%;
+  /* overflow:hidden; */
 }
 
 .cursive {
@@ -97,6 +96,8 @@ footer, .wrapper:after {
 
 }
 
+/* Used in Support.html */
+/* TODO: Make this responsive */
 .container-crop img {
   display: block;
   max-width: 100%;
@@ -106,25 +107,6 @@ footer, .wrapper:after {
   bottom: 0;
   left: 0;
   right: 0;
-}
-
-.contain-full{
-  /*background-size: 175% auto;*/
-  /*background-image: none;*/
-  /*background-size: contain;*/
-}
-
-.frame-oval {
-  max-height: 270px;
-  /*width: 120px;
-  min-height: 120px;
-  max-height: auto;*/
-  /*max-width: auto;
-  */
-  /*min-width: 120px;
-  min-height: 120px;*/
-  /*padding-left: 0;
-  padding-right: 0;*/
 }
 
 /* My own theme */
@@ -156,6 +138,13 @@ body {
 
 }
 
+#button-know-more {
+  text-align: center;
+}
+#button-contact {
+  text-align: center;
+}
+
 /*// Extra small devices (portrait phones, less than 576px)
 // No media query since this is the default in Bootstrap*/
 
@@ -166,6 +155,14 @@ body {
 
 .how-it-works {
   display: none;
+}
+
+
+
+@media screen and (min-width: 400px) {
+  .team-pic {
+    width: 30vw;
+  }
 }
 
 /*// Medium devices (tablets, 768px and up)*/
@@ -183,6 +180,17 @@ body {
     align-items: center;
   }
 
+  .team-pic {
+    width: 15vw;
+  }
+  figcaption>h3 {
+    font-size: 1.5em;
+  }
+  figcaption>ul>li {
+    font-size: 0.8em;
+  }
+
+
 }
 
 /* Large devices */
@@ -193,7 +201,24 @@ body {
   .how-it-works-small {
     display: none;
   }
+  #button-know-more {
+    text-align: right;
+  }
+  #button-contact {
+    text-align: left;
+  }
+  .team-pic {
+    width: 13vw;
+  }
+  /* figcaption>h3 {
+    font-size: 2.5em;
+  }
+  figcaption>ul>li {
+    font-size: 1.5em;
+  } */
 }
+
+
 
 /*// Large devices (desktops, 992px and up)
 @media (min-width: 992px) { ... }

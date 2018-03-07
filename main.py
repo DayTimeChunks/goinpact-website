@@ -4,7 +4,10 @@ import jinja2
 import webapp2
 import urllib
 import urllib2
+import datetime # json-page writes.
+import time # for timestamps (checking memcache writes)
 
+from google.appengine.api import memcache
 from google.appengine.api import images
 from google.appengine.ext import blobstore
 from google.appengine.api import mail
@@ -24,12 +27,12 @@ from pybcrypt import bcrypt
 # Data Models
 import models_v1
 from models_v1 import *
+from maps import *
 
 # Authenticating users with google
 from google.appengine.api import users
 
 # Contact form messaging
-
 import smtplib
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
@@ -45,6 +48,8 @@ jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
                                autoescape=True) # autoescape is important for security!!
 
 
+# For memecache:
+DEBUG = os.environ['SERVER_SOFTWARE'].startswith('Development')
 
 CLIENT_ID = "902461304999-hgej779q0upelr8ejpoeqfj5k0tppm2k.apps.googleusercontent.com"
 
@@ -103,6 +108,7 @@ class MainPage(Handler):
     def get(self):
         self.render_front() # draw main page
 
+    # Email function (Contatc Page)
     def post(self):
         have_error = False
         fname = self.request.get("fname")
@@ -205,43 +211,81 @@ class Blog(Handler):
         # Here we check to see if user is logged in or not (on every request)
         webapp2.RequestHandler.initialize(self, *a, **kw)
         uid = self.read_secure_cookie('user_id')
-        print("secure uid:", uid)
+        # print("secure uid:", uid)
         # Keep track of every user
         self.user = uid and User.by_id(int(uid))
-        print("Initialize self.user:", self.user)
+        # print("Initialize self.user:", self.user)
         # if self.user:
         #     u = User.by_id(int(uid))
             # print("Initialize self.useremail:", u.email)
 
+# Initialize counter value, used in bump_counter()
+memcache.set(key="counter", value=0)
+time_at_cache = time.time()
+def top_arts(update = False):
+    # Store article list in a memcache object
+    key = 'top' # Will be the reference to the value we will store here.
+    logging.warning("Getting CACHE")
+    logging.warning("Update valu was: %s" % update)
+    arts = memcache.get(key, for_cas=True)
+    # print("arts from cache: ", arts)
+    if arts is None or update: # Query the database
+        logging.warning("Running a DB Query == Moneyyyy!")
+        bump_counter(key)
+        arts = memcache.get(key)
+        # print("arts from query: ", arts)
+    return arts
+
+def bump_counter(key):
+   client = memcache.Client()
+   max_retries = 99
+   n = 0
+   while True:
+       n += 1
+       if max_retries == n:
+           print("Reached max retires")
+           break # Aoid infinite loop
+       counter = client.gets('counter')
+       if counter is None: raise KeyError('Uninitialized counter')
+       if client.cas('counter', counter+1):
+           arts = Articles.query().order(-Articles.created)
+           arts = list(arts) # Avoids querying the db again in jinja template!
+           r = memcache.set(key, arts) # True or False
+           if r:
+               time_at_cache = time.time()
+           else:
+               logging.debug("Memecache failed to reset!!!")
+           # print("Is success? memcache.set(key, arts): ", r)
+           # print("client.gets('counter'): ", client.gets('counter'))
+           break
+       else:
+           time.sleep(min(64, (2 ** n)) + (random.randint(0, 1000) / 1000))
 
 class BlogFront(Blog):
-    # Open new page on "New post" button click
-    def post(self):
-        self.redirect("/blog/newpost")
-
     # Collect all articles in the database to render
     def get(self):
-        # Query Method 1
-        # arts = db.GqlQuery("SELECT * FROM Articles ORDER BY created DESC")
-        # self.render("blog.html", arts=arts)
-        # Query Method 2
-        # arts = Articles.all().order('-created') # Old db
-        arts = Articles.query().order(-Articles.created) # new ndb
-        # Avoid querying the db again in jinja template!
-        arts = list(arts) # Make a list of art objects
+        arts = top_arts()
         if arts:
+            time_now = time.time()
+            time_since = time_now - time_at_cache
             self.render("blog.html", arts=arts)
+            self.write("queried " + str(round(time_since, 2)))
+
             # self.render("blog.html", arts=new_art_list)
         else:
             self.render("blog.html")
+
+    # Open new page on "New post" button click
+    def post(self):
+        self.redirect("/blog/newpost")
 
 class BlogFrontJson(Blog):
     # This handler converts each blog article into a
     # json readable object for computer parsing.
     def get(self):
         import json
-        import datetime
-        arts = Articles.query().order(-Articles.created)
+        # arts = Articles.query().order(-Articles.created)
+        arts = top_arts()
         arts = list(arts)
         json_arts = []
         for a in arts:
@@ -255,65 +299,6 @@ class BlogFrontJson(Blog):
 
         json_arts = json.dumps(json_arts)
         self.write(json_arts)
-
-# Use this for the course.
-# Later, allow user to provide the coordinates
-# directly through the user-interface and post the map
-def get_coords(ip):
-    # API that loads the address based on the ip address provided
-    ip = '4.2.2.2' # Deguggin hardcoded ip
-    url = 'http://api.hostip.info/?ip=' + str(ip)
-    content = None
-
-    try:
-        request = urllib2.Request(url)
-        # Identify yourself! Be polite, say Hi!
-        request.add_header('User-Agent', 'TheinPactProject/1.0 +http://diveintopython.org/  daytightchunks@gmail.com')
-        opener = urllib2.build_opener()
-
-        # content = urllib2.urlopen(url).read()
-        content = opener.open(request).read()
-    except urllib2.URLError, e:
-        print e.fp.read()
-        return
-
-    if content:
-        # parse the xml and find the coordinates
-        xml = minidom.parseString(content)
-        coords = xml.getElementsByTagName('gml:coordinates')[0].lastChild.nodeValue
-        if coords:
-            lon, lat = coords.split(',')
-            # print(lat, lon)
-            return ndb.GeoPt(lat, lon)
-
-def gmaps_img(points):
-    # points is a list of tuples, [[lat, lon], [lat, lon]]
-    GMAPS_URL = "http://maps.googleapis.com/maps/api/staticmap?size=380x263&sensor=false&"
-    # Add the string 'markers=lat,lon' for each element in points and separate with '&'
-    # markers = '&'.join('markers=%s,%s' % (p[0], p[1]) for p in points)  # For when a long list of markes is given
-    # FOr only one coordinate pair.
-    markers = 'markers=%s,%s' % (points[0], points[1])
-    return GMAPS_URL + markers
-
-def get_token(self):
-    url = 'http://localhost:8080/tokensignin'
-    content = None
-    try:
-        request = urllib2.Request(url)
-        # Identify yourself! Be polite, say Hi!
-        request.add_header('User-Agent', 'TheinPactProject/1.0 +http://goinpact.org/  daytightchunks@gmail.com')
-        opener = urllib2.build_opener()
-
-        # content = urllib2.urlopen(url).read()
-        content = opener.open(request).read()
-    except urllib2.URLError, e:
-        self.write(e.fp.read())
-        return
-
-    if content:
-        self.write(repr(content.headers.items()))
-    else:
-        self.write("No token found")
 
 class NewPost(Blog):
     # redirected from New Post click button on BlogFront
@@ -392,26 +377,39 @@ class NewPost(Blog):
             a.put() # Saves the art object to the database
             # article_id = a.key().id() # old db
             article_id = a.key.integer_id() # new ndb
-            # One way:
-            # self.redirect("/blog/" + str(article_id), article_id)
-            # Another way (solution):
-            # Get will extract whatever is after '/blog/'
-            self.redirect("/blog/%s" % str(article_id))
+            # Needed to move the memcache update to ArticleView,
+            # because memcache and database were not sinking.
+            # Maybe to do with sending a request?
+            self.redirect("/storeme/%s" % str(article_id))
         else:
             error = "Please include both subject and content."
             self.render_post(subject=subject, content=content, error=error)
+
+class StoreArticle(Blog):
+    def get(self, article_id):
+        # Updating the CACHE
+        # CACHE.clear() # Empty the cache to update on next query risks a chache stampede!
+        logging.warning("Wrting New Post")
+        logging.warning("Calling top_arts(True)")
+        narts = top_arts(update = True) # Query the ndb only on new writes.
+        logging.warning("New arts length: %s" % len(narts))
+        self.redirect("/blog/%s" % str(article_id))
+
+
 
 class ArticleView(Blog):
     # PostPage where Permalink.hmtml is run
     # article_id is passed from the webapp2 regex expression
     def get(self, article_id):
-
-        logging.warning("URL: %s" % str(self.request.url))
+        # logging.warning("URL: %s" % str(self.request.url))
         # Parse article_id, checking if ends in .json
         # If json, return a json object, othersie find the article
         parsed = article_id.split(".")
         if len(parsed) == 1:
-            # One way
+            # TODO: use memcache instead!
+            # store the article in memcash, with its key as id,
+            # when someone views the same article, it will be in the cache.
+            # will need to use the .add(key, article) function if not found on existing.
             article = Articles.get_by_id(int(article_id))
             #  Another way (solution)
             # key = db.Key.from_path('Post', int(article_id), parent=blog_key())
@@ -563,7 +561,8 @@ class EditPost(Blog):
                 article.map_url = gmaps_img([lat, lon])
 
             article.put()
-            self.redirect("/blog/%s" % str(article_id))
+            self.redirect("/storeme/%s" % str(article_id))
+            # self.redirect("/blog/%s" % str(article_id))
         else:
             error = "Please include both subject and content."
             # TODO: not sure if second argument will work...???
@@ -619,26 +618,6 @@ class OtherPic(Blog):
                 return
         else:
             return
-
-class ThirdPic(Blog):
-    def get(self, article_id):
-        article = Articles.get_by_id(int(article_id))
-        thumbnail = None
-        if article:
-            img_3rd = images.Image(article.image_3rd)
-            w = int(article.image_3rd_w)
-            h = int(article.image_3rd_h)
-            if img_3rd and int(w) and int(h):
-                img_3rd.resize(width=w, height=h)
-                thumbnail = img_3rd.execute_transforms(output_encoding=images.JPEG)
-                self.response.headers['Content-Type'] = 'image/jpeg'
-                self.response.out.write(thumbnail)
-            else:
-                return
-        else:
-            return
-
-
 
 # TODO: Changed from PermTest
 class EmailTest(Blog):
@@ -847,7 +826,7 @@ class Debug(Blog):
         self.redirect('/debug')
 
 
-
+# Not yet used, to be used when needing to re-design the db structure
 class UpdateSchemaHandler(webapp2.RequestHandler):
     """Queues a task to start updating the model schema."""
     def post(self):
@@ -911,6 +890,7 @@ app = webapp2.WSGIApplication([('/', MainPage),
                                ('/blog/?', BlogFront), # See note below on "?"
                                ('/blog/.json', BlogFrontJson),
                                ('/blog/(\d+)|[json]', ArticleView),
+                               ('/storeme/(\d+)', StoreArticle),
                                ('/editpost/(\d+)', EditPost),
                                ('/thumbnailer/(\d+)', Thumbnailer),
                                ('/otherpic/(\d+)/(\w+)', OtherPic), # Need to optimize how these are generated.
