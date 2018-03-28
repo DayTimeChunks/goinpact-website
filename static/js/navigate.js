@@ -58,6 +58,26 @@ $(function() {
     $('#edit-post').hide()
   }
 
+  // document.addEventListener("DOMContentLoaded", function(event){
+  // Do work afetr loading.
+  var menu = document.getElementById('menu-my-inpact');
+  var main = document.querySelector('main');
+  // var drawer = document.querySelector('.nav');
+  var drawer = document.getElementById('my-nav');
+  console.log(drawer);
+  console.log(menu);
+
+  menu.addEventListener('click', function(e) {
+    drawer.classList.toggle('open');
+    e.stopPropagation();
+  });
+  if (main) {
+    main.addEventListener('click', function() {
+      drawer.classList.remove('open');
+    });
+  }
+// });
+
   /****
   Dynamic text arrangement in onepost.html
   ****/

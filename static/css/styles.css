@@ -157,9 +157,62 @@ body {
   display: none;
 }
 
+.my-inpact {
+  background-color: rgb(250, 251, 252);
+}
+
+
+.my-nav {
+  z-index: 10;
+  /* Places nav in-front of everything */
+  width: 300px;
+  margin-bottom: -100px;
+  height: 100vh;
+  position: absolute;
+  /* This trasform moves the drawer off canvas. */
+  -webkit-transform: translate(-300px, 0);
+  transform: translate(-300px, 0);
+  /* Optionally, we animate the drawer. */
+  transition: transform 0.3s ease;
+  background-color: #3E4551;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.5);
+}
+
+.my-nav.open {
+  /* position: relative; */
+  order : 0;
+  /* width: 100%; */
+  /* z-index: auto; */
+  -webkit-transform: translate(0, 0);
+  transform: translate(0, 0);
+    /* background-color: #fff; */
+}
+
+.my-card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  width: 25rem;
+}
+
+div.wish-tree {
+  /* background-image: url('../../www/img/carousel/WishTree_375w.jpg'); */
+  /* background-image: url('../../www/img/carousel/WishTree_576w.jpg'); */
+  background-image: url('../../www/img/carousel/WishTree_768w.jpg');
+  background-size: cover;
+}
+
+div.boat-path {
+  background-image: url('../../www/img/carousel/BoatPath_500w.jpg');
+  background-size: cover;
+}
 
 
 @media screen and (min-width: 400px) {
+
+  div.boat-path {
+    background-image: url('../../www/img/carousel/BoatPath_768w.jpg');
+    background-size: cover;
+  }
+
   .team-pic {
     width: 30vw;
   }
@@ -189,12 +242,21 @@ body {
   figcaption>ul>li {
     font-size: 0.8em;
   }
-
-
 }
 
 /* Large devices */
 @media (min-width: 992px) {
+
+  div.wish-tree {
+    background-image: url('../../www/img/carousel/WishTree_992w.jpg');
+    background-size: cover;
+  }
+
+  div.boat-path {
+    background-image: url('../../www/img/carousel/BoatPath_1000w.jpg');
+    background-size: cover;
+  }
+
   .how-it-works {
     display: inline;
   }
@@ -216,10 +278,43 @@ body {
   figcaption>ul>li {
     font-size: 1.5em;
   } */
+  /* Menu Side Bar my Inpact */
+  .my-nav {
+  position: relative;
+  order : 0;
+  width: 100%;
+  z-index: auto;
+  /* margin-left: auto;
+  margin-right: auto; */
+  -webkit-transform: translate(0, 0);
+  transform: translate(0, 0);
+  }
+
 }
 
+@media (min-width: 1200px) {
+  div.wish-tree {
+    background-image: url('../../www/img/carousel/WishTree_1200w.jpg');
+    background-size: cover;
+  }
+  div.boat-path {
+    background-image: url('../../www/img/carousel/BoatPath_2000w.jpg');
+    background-size: cover;
+  }
+}
 
+@media (min-width: 1700px) {
+  .text-xl-light {
+    color: #f8f9fa !important;
+  }
+}
 
+@media (min-width: 2000px) {
+  div.boat-path {
+    background-image: url('../../www/img/carousel/BoatPath_3000w.jpg');
+    background-size: cover;
+  }
+}
 /*// Large devices (desktops, 992px and up)
 @media (min-width: 992px) { ... }
 

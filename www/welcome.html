@@ -1,16 +1,70 @@
-{% extends "base-nobut.html"%}
+{% extends "base-myinpact.html"%}
 
 {% block content %}
+<main class="col-lg-9 col-md-12">
 
-<section class="py-5 my-5">
-  <div class="container text-light">
-    <h2>Welcome, {{username}}!</h2>
+<!-- <section class="py-5 my-5">
+  </section> -->
+  <div class="">
+    <div class="container float-right text-right">
+      <nav class="navbar-expand-lg navbar-light bg-light pt-3">
+        <button id="menu-my-inpact" class="navbar-toggler mb-5 py-2" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </nav>
+    </div>
+    <div class="container">
+    
+      <h2>Welcome, {{username}}!</h2>
+
+      <div class="row">
+        <div class="card mx-3 my-3 my-card">
+          <img class="card-img-top" src="..." alt="Card image cap">
+          <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+          </div>
+        </div>
+        <div class="card mx-3 my-3 my-card">
+          <img class="card-img-top" src="..." alt="Card image cap">
+          <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+          </div>
+        </div>
+        <div class="card mx-3 my-3 my-card">
+          <img class="card-img-top" src="..." alt="Card image cap">
+          <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- Navigation -->
+    <!-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top mb-5">
+
+    </nav> -->
+
+
     <!-- <p>Antoine, at this point, this "logged-in space" is only for you. When logged in as admin (i.e. with a gmail account that you gave me) you can post new and edit old posts.</p>
     <p>Note that picture arrangement in the article is rigid for the moment, with a maximum of 3 pics per article.</p>
     <a href="{{ g_url | safe}}">{{ g_url_txt }}</a> -->
+
+
   </div>
 
-</section>
+
+
+</main>
 
 
 {% endblock %}

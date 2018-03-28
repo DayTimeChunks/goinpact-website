@@ -246,7 +246,11 @@ def bump_counter(key):
            print("Reached max retires")
            break # Aoid infinite loop
        counter = client.gets('counter')
-       if counter is None: raise KeyError('Uninitialized counter')
+       if counter is None:
+           memcache.set(key="counter", value=0)
+           counter = client.gets('counter')
+           if counter is None:
+               raise KeyError('Uninitialized counter')
        if client.cas('counter', counter+1):
            arts = Articles.query().order(-Articles.created)
            arts = list(arts) # Avoids querying the db again in jinja template!
