@@ -39,6 +39,7 @@ footer {
 .carousel-item {
   height: 100vh;
   min-height: 300px;
+  max-height: 500px;
   background: no-repeat center center scroll;
   -webkit-background-size: cover;
   -moz-background-size: cover;
@@ -194,22 +195,26 @@ body {
 }
 
 div.wish-tree {
-  /* background-image: url('../../www/img/carousel/WishTree_375w.jpg'); */
-  /* background-image: url('../../www/img/carousel/WishTree_576w.jpg'); */
-  background-image: url('../../www/img/carousel/WishTree_768w.jpg');
+  background-image: url('../../www/img/carousel/WishTree_400w500h.jpg');
   background-size: cover;
 }
 
+
 div.boat-path {
-  background-image: url('../../www/img/carousel/BoatPath_500w.jpg');
+  background-image: url('../../www/img/carousel/BoatPath_400w500h.jpg');
   background-size: cover;
 }
 
 
 @media screen and (min-width: 400px) {
 
+  div.wish-tree {
+    background-image: url('../../www/img/carousel/WishTree_576w500h.jpg');
+    background-size: cover;
+  }
+
   div.boat-path {
-    background-image: url('../../www/img/carousel/BoatPath_768w.jpg');
+    background-image: url('../../www/img/carousel/BoatPath_576w500h.jpg');
     background-size: cover;
   }
 
@@ -218,8 +223,30 @@ div.boat-path {
   }
 }
 
+
+@media screen and (min-width: 576px) {
+  div.wish-tree {
+    /* background-image: url('../../www/img/carousel/WishTree_992w.jpg'); */
+    background-image: url('../../www/img/carousel/WishTree_768w500h.jpg');
+    background-size: cover;
+  }
+
+}
+
 /*// Medium devices (tablets, 768px and up)*/
 @media (min-width: 768px) {
+
+  div.wish-tree {
+    /* background-image: url('../../www/img/carousel/WishTree_992w.jpg'); */
+    background-image: url('../../www/img/carousel/WishTree_992w500h.jpg');
+    background-size: cover;
+  }
+
+  div.boat-path {
+    /* background-image: url('../../www/img/carousel/BoatPath_1000w.jpg'); */
+    background-image: url('../../www/img/carousel/BoatPath_992w500h.jpg');
+    background-size: cover;
+  }
 
   .contain-full {
     background-image: url('../img/coastline-sep.jpg');
@@ -248,12 +275,14 @@ div.boat-path {
 @media (min-width: 992px) {
 
   div.wish-tree {
-    background-image: url('../../www/img/carousel/WishTree_992w.jpg');
+    /* background-image: url('../../www/img/carousel/WishTree_992w.jpg'); */
+    background-image: url('../../www/img/carousel/WishTree_1200w500h.jpg');
     background-size: cover;
   }
 
   div.boat-path {
-    background-image: url('../../www/img/carousel/BoatPath_1000w.jpg');
+    /* background-image: url('../../www/img/carousel/BoatPath_1000w.jpg'); */
+    background-image: url('../../www/img/carousel/BoatPath_1200w500h.jpg');
     background-size: cover;
   }
 
@@ -294,12 +323,17 @@ div.boat-path {
 
 @media (min-width: 1200px) {
   div.wish-tree {
-    background-image: url('../../www/img/carousel/WishTree_1200w.jpg');
+    background-image: url('../../www/img/carousel/WishTree_1800w600h.jpg');
     background-size: cover;
   }
   div.boat-path {
-    background-image: url('../../www/img/carousel/BoatPath_2000w.jpg');
+    /* background-image: url('../../www/img/carousel/BoatPath_2000w.jpg'); */
+    background-image: url('../../www/img/carousel/BoatPath_1800w600h.jpg');
     background-size: cover;
+  }
+
+  .carousel-item{
+    max-height: 600px;
   }
 }
 
@@ -309,12 +343,12 @@ div.boat-path {
   }
 }
 
-@media (min-width: 2000px) {
+/* @media (min-width: 2000px) {
   div.boat-path {
     background-image: url('../../www/img/carousel/BoatPath_3000w.jpg');
     background-size: cover;
   }
-}
+} */
 /*// Large devices (desktops, 992px and up)
 @media (min-width: 992px) { ... }
 
