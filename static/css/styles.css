@@ -166,13 +166,13 @@ body {
 .my-nav {
   z-index: 10;
   /* Places nav in-front of everything */
-  width: 300px;
+  width: 230px;
   margin-bottom: -100px;
-  height: 100vh;
   position: absolute;
+  border-radius: 1px 1px 20px 1px;
   /* This trasform moves the drawer off canvas. */
-  -webkit-transform: translate(-300px, 0);
-  transform: translate(-300px, 0);
+  -webkit-transform: translate(-230px, 0);
+  transform: translate(-230px, 0);
   /* Optionally, we animate the drawer. */
   transition: transform 0.3s ease;
   background-color: #3E4551;
@@ -199,9 +199,29 @@ div.wish-tree {
   background-size: cover;
 }
 
-
 div.boat-path {
   background-image: url('../../www/img/carousel/BoatPath_400w500h.jpg');
+  background-size: cover;
+}
+
+div.mon-hut {
+  background-image: url('../../www/img/carousel/Mongolia_400w500h.jpg');
+  background-size: cover;
+}
+
+div.taj-ind {
+  background-image: url('../../www/img/carousel/India_400w500h.jpg');
+  background-size: cover;
+}
+
+div.tib-fla {
+  background-image: url('../../www/img/carousel/Tibet_400w500h.jpg');
+  background-size: cover;
+}
+
+/* Support page */
+div.hand-rock {
+  background-image: url('../../www/img/support/handRocks_420w400h.jpg');
   background-size: cover;
 }
 
@@ -218,6 +238,27 @@ div.boat-path {
     background-size: cover;
   }
 
+  div.mon-hut {
+    background-image: url('../../www/img/carousel/Mongolia_576w500h.jpg');
+    background-size: cover;
+  }
+
+  div.taj-ind {
+    background-image: url('../../www/img/carousel/India_576w500h.jpg');
+    background-size: cover;
+  }
+
+  div.tib-fla {
+    background-image: url('../../www/img/carousel/Tibet_576w500h.jpg');
+    background-size: cover;
+  }
+
+  /* Support page */
+  div.hand-rock {
+    background-image: url('../../www/img/support/handRocks_576w500h.jpg');
+    background-size: cover;
+  }
+
   .team-pic {
     width: 30vw;
   }
@@ -226,11 +267,14 @@ div.boat-path {
 
 @media screen and (min-width: 576px) {
   div.wish-tree {
-    /* background-image: url('../../www/img/carousel/WishTree_992w.jpg'); */
     background-image: url('../../www/img/carousel/WishTree_768w500h.jpg');
     background-size: cover;
   }
-
+  /* Support page */
+  div.hand-rock {
+    background-image: url('../../www/img/support/handRocks_768w500h.jpg');
+    background-size: cover;
+  }
 }
 
 /*// Medium devices (tablets, 768px and up)*/
@@ -248,10 +292,32 @@ div.boat-path {
     background-size: cover;
   }
 
+  div.mon-hut {
+    /* background-image: url('../../www/img/carousel/BoatPath_2000w.jpg'); */
+    background-image: url('../../www/img/carousel/Mongolia_992w500h.jpg');
+    background-size: cover;
+  }
+
+  div.taj-ind {
+    background-image: url('../../www/img/carousel/India_992w500h.jpg');
+    background-size: cover;
+  }
+
+  div.tib-fla {
+    background-image: url('../../www/img/carousel/Tibet_992w500h.jpg');
+    background-size: cover;
+  }
+
   .contain-full {
     background-image: url('../img/coastline-sep.jpg');
     background-size: 175% auto;
     /*background-size: contain;*/
+  }
+
+  /* Support page */
+  div.hand-rock {
+    background-image: url('../../www/img/support/handRocks_992w500h.jpg');
+    background-size: cover;
   }
 
   .canvas-neighbor {
@@ -283,6 +349,28 @@ div.boat-path {
   div.boat-path {
     /* background-image: url('../../www/img/carousel/BoatPath_1000w.jpg'); */
     background-image: url('../../www/img/carousel/BoatPath_1200w500h.jpg');
+    background-size: cover;
+  }
+
+  div.mon-hut {
+    /* background-image: url('../../www/img/carousel/BoatPath_2000w.jpg'); */
+    background-image: url('../../www/img/carousel/Mongolia_1200w500h.jpg');
+    background-size: cover;
+  }
+
+  div.taj-ind {
+    background-image: url('../../www/img/carousel/India_1200w500h.jpg');
+    background-size: cover;
+  }
+
+  div.tib-fla {
+    background-image: url('../../www/img/carousel/Tibet_1200w500h.jpg');
+    background-size: cover;
+  }
+
+  /* Support page */
+  div.hand-rock {
+    background-image: url('../../www/img/support/handRocks_1200w600h.jpg');
     background-size: cover;
   }
 
@@ -327,19 +415,41 @@ div.boat-path {
     background-size: cover;
   }
   div.boat-path {
-    /* background-image: url('../../www/img/carousel/BoatPath_2000w.jpg'); */
     background-image: url('../../www/img/carousel/BoatPath_1800w600h.jpg');
+    background-size: cover;
+  }
+
+  div.mon-hut {
+    background-image: url('../../www/img/carousel/Mongolia_1800w600h.jpg');
+    background-size: cover;
+  }
+
+  div.taj-ind {
+    background-image: url('../../www/img/carousel/India_1800w600h.jpg');
+    background-size: cover;
+  }
+
+  div.tib-fla {
+    background-image: url('../../www/img/carousel/Tibet_1800w600h.jpg');
     background-size: cover;
   }
 
   .carousel-item{
     max-height: 600px;
   }
+
+  /* Support page */
+  div.hand-rock {
+    background-image: url('../../www/img/support/handRocks_1600w700h.jpg');
+    background-size: cover;
+  }
 }
 
-@media (min-width: 1700px) {
-  .text-xl-light {
-    color: #f8f9fa !important;
+@media (min-width: 1600px) {
+  /* Support page */
+  div.hand-rock {
+    background-image: url('../../www/img/support/handRocks_1800w700h.jpg');
+    background-size: cover;
   }
 }
 
