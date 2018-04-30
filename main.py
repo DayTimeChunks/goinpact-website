@@ -29,6 +29,9 @@ import models_v1
 from models_v1 import *
 from maps import *
 
+# keys
+from my_keys import *
+
 # Authenticating users with google
 from google.appengine.api import users
 
@@ -51,7 +54,7 @@ jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
 # For memecache:
 DEBUG = os.environ['SERVER_SOFTWARE'].startswith('Development')
 
-CLIENT_ID = "902461304999-hgej779q0upelr8ejpoeqfj5k0tppm2k.apps.googleusercontent.com"
+# CLIENT_ID = "<enter-own-client-id-here>.apps.googleusercontent.com"
 
 def hash_str(s, salt = None):
     if not salt:
@@ -64,7 +67,7 @@ def check_str(s, h):
     if h == hash_str(s, salt):
         return s
 
-secret = str('movethissecrettoanewmodule')
+
 def make_secure_val(val, secret, salt = None):
     if not salt:
         salt = bcrypt.gensalt()
