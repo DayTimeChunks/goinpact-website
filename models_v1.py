@@ -151,8 +151,6 @@ class Articles(ndb.Model):
         # 'cls' refers to the User class
         return cls.get_by_id(aid, parent = blog_key())
 
-
-
     # TODO: define a similar method here for Articles.
     # @classmethod
     # def by_id(cls, id):

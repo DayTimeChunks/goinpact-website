@@ -194,6 +194,11 @@ body {
   width: 25rem;
 }
 
+.project-card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  width: 20rem;
+}
+
 div.wish-tree {
   background-image: url('../../www/img/carousel/WishTree_400w500h.jpg');
   background-size: cover;

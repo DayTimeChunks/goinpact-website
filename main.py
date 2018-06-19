@@ -180,6 +180,10 @@ class Team(Handler):
     def get(self):
         self.render("team.html")
 
+class Project(Handler):
+    def get(self):
+        self.render("project.html")
+
 
 class Blog(Handler):
 
@@ -905,6 +909,7 @@ app = webapp2.WSGIApplication([('/', MainPage),
                                ('/signup', Register),
                                ('/login', Login),
                                ('/logout', Logout),
+                               ('/project', Project),
                                ('/welcome', Welcome),
                                ('/debug', Debug) # ,
                                # ('/permalinktest/(\d+)', PermTest) #, ('/update_schema', UpdateSchemaHandler)
